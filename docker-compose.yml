@@ -5,7 +5,7 @@ services:
     environment:
       - OPENAPI_OUTPUT_FILE=./shared-data/openapi.json
       - DATABASE_URL=${DATABASE_URL}
-      - TEST_DATABASE_URL=postgresql+asyncpg://postgres:password@db:5433/testdatabase
+      - TEST_DATABASE_URL=mysql+pymysql://root:dtcc-hack@singlestore:3306/testdatabase
       - MAIL_SERVER=mailhog
     ports:
       - "8000:8000"
@@ -16,7 +16,21 @@ services:
       - fastapi-venv:/app/.venv
       - ./local-shared-data:/app/shared-data
     depends_on:
-      - db
+      - singlestore
+  singlestore: # local test singlestore database cluster, hackathon data on https://portal.singlestore.com/organizations/02f09220-558c-4cbd-bd7a-040b7b490afe/workspaces/04e671e3-dc91-4e19-9789-5aacdcd60b15
+    # test connectivity with...
+    #   mysql -h 127.0.0.1 -P 3306 -u root --password="dtcc-hack" --prompt="singlestore> " --database=""
+    image: singlestore/cluster-in-a-box
+    environment:
+      - LICENCE_KEY=FIXME # https://portal.singlestore.com/organizations/02f09220-558c-4cbd-bd7a-040b7b490afe/licenses/install-guide/
+      - ROOT_PASSWORD=dtcc-hack
+    ports:
+      - "8080:8080"
+      - "3306:3306"
+    networks:
+      - my_network
+    volumes:
+      - singlestore_data:/var/lib/memsql
   db:
     image: postgres:17
     environment:
@@ -68,6 +82,7 @@ volumes:
   postgres_data:
   nextjs-node-modules:
   fastapi-venv:
+  singlestore_data:
 
 networks:
   my_network:
