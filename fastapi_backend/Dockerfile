@@ -33,3 +33,4 @@ EXPOSE 8000
 
 # Command to run the application
 CMD ["./start.sh"]
+#CMD ["sh", "-c", "sleep 1000000"]

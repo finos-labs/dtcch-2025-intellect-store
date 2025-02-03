@@ -32,7 +32,7 @@ export default function DashboardLayout({
             className="flex items-center justify-center rounded-full"
           >
             <Image
-              src="/images/vinta.png"
+              src="/images/IntellectEU_Cube_Logo.png"
               alt="Vinta"
               width={64}
               height={64}
