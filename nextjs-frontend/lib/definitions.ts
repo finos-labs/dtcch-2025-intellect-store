@@ -42,3 +42,18 @@ export const itemSchema = z.object({
       message: "Quantity must be a positive integer",
     }),
 });
+
+export const sourceSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  link: z.string().url({ message: "Link must be a valid URL" }),
+  description: z.string().optional(),
+  last_updated: z.string().optional().refine((val) => {
+    // Optional field, can be a valid ISO date string
+    if (val) {
+      return !isNaN(Date.parse(val));
+    }
+    return true;
+  }, {
+    message: "Last updated must be a valid date",
+  }),
+});

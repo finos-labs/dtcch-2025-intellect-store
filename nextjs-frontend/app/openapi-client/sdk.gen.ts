@@ -57,6 +57,9 @@ import type {
   UpdateSourceData,
   UpdateSourceError,
   UpdateSourceResponse,
+  DeleteSourceData,
+  DeleteSourceError,
+  DeleteSourceResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -347,6 +350,22 @@ export const updateSource = <ThrowOnError extends boolean = false>(
   return (options?.client ?? client).put<
     UpdateSourceResponse,
     UpdateSourceError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/sources/{source_id}",
+  });
+};
+
+/**
+ * Delete Source
+ */
+export const deleteSource = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<DeleteSourceData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).delete<
+    DeleteSourceResponse,
+    DeleteSourceError,
     ThrowOnError
   >({
     ...options,

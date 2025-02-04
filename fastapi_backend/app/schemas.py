@@ -27,17 +27,17 @@ class UserUpdate(schemas.BaseUserUpdate):
     pass
 
 
-class ItemBase(BaseModel):
+class RepositoryBase(BaseModel):
     name: str
     description: str | None = None
     quantity: int | None = None
 
 
-class ItemCreate(ItemBase):
+class RepositoryCreate(RepositoryBase):
     pass
 
 
-class ItemRead(ItemBase):
+class RepositoryRead(RepositoryBase):
     id: UUID
     user_id: UUID
 
@@ -48,6 +48,7 @@ class SourceBase(BaseModel):
     name: str
     link: HttpUrl
     last_updated: datetime | None = None
+    description: str | None = None
 
 
 class SourceCreate(SourceBase):
@@ -58,6 +59,7 @@ class SourceUpdate(BaseModel):
     name: str | None = None
     link: HttpUrl | None = None
     last_updated: datetime | None = None
+    description: str | None = None
 
 
 class SourceRead(SourceBase):

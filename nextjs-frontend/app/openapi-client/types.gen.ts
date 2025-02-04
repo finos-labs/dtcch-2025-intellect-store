@@ -61,12 +61,14 @@ export type SourceCreate = {
   name: string;
   link: string;
   last_updated?: string | null;
+  description?: string | null;
 };
 
 export type SourceRead = {
   name: string;
   link: string;
   last_updated?: string | null;
+  description?: string | null;
   id: string;
   user_id: string;
 };
@@ -75,6 +77,7 @@ export type SourceUpdate = {
   name?: string | null;
   link?: string | null;
   last_updated?: string | null;
+  description?: string | null;
 };
 
 export type UserCreate = {
@@ -249,3 +252,15 @@ export type UpdateSourceData = {
 export type UpdateSourceResponse = SourceRead;
 
 export type UpdateSourceError = HTTPValidationError;
+
+export type DeleteSourceData = {
+  path: {
+    source_id: string;
+  };
+};
+
+export type DeleteSourceResponse = {
+  [key: string]: unknown;
+};
+
+export type DeleteSourceError = HTTPValidationError;
