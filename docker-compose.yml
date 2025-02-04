@@ -21,6 +21,7 @@ services:
     # test connectivity with...
     #   mysql -h 127.0.0.1 -P 3306 -u root --password="dtcc-hack" --prompt="singlestore> " --database=""
     image: singlestore/cluster-in-a-box
+    platform: linux/amd64
     environment:
       - LICENCE_KEY=FIXME # https://portal.singlestore.com/organizations/02f09220-558c-4cbd-bd7a-040b7b490afe/licenses/install-guide/
       - ROOT_PASSWORD=dtcc-hack
