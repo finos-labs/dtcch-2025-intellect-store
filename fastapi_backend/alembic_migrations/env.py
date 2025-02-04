@@ -43,7 +43,7 @@ if not database_url:
 parsed_db_url = urlparse(database_url)
 
 async_db_connection_url = (
-    f"postgresql+asyncpg://{parsed_db_url.username}:{parsed_db_url.password}@"
+    f"{parsed_db_url.scheme}://{parsed_db_url.username}:{parsed_db_url.password}@"
     f"{parsed_db_url.hostname}{':' + str(parsed_db_url.port) if parsed_db_url.port else ''}"
     f"{parsed_db_url.path}"
 )
