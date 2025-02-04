@@ -57,6 +57,26 @@ export type login = {
   client_secret?: string | null;
 };
 
+export type SourceCreate = {
+  name: string;
+  link: string;
+  last_updated?: string | null;
+};
+
+export type SourceRead = {
+  name: string;
+  link: string;
+  last_updated?: string | null;
+  id: string;
+  user_id: string;
+};
+
+export type SourceUpdate = {
+  name?: string | null;
+  link?: string | null;
+  last_updated?: string | null;
+};
+
 export type UserCreate = {
   email: string;
   password: string;
@@ -206,3 +226,26 @@ export type DeleteItemData = {
 export type DeleteItemResponse = unknown;
 
 export type DeleteItemError = HTTPValidationError;
+
+export type ReadSourcesResponse = Array<SourceRead>;
+
+export type ReadSourcesError = unknown;
+
+export type CreateSourceData = {
+  body: SourceCreate;
+};
+
+export type CreateSourceResponse = SourceRead;
+
+export type CreateSourceError = HTTPValidationError;
+
+export type UpdateSourceData = {
+  body: SourceUpdate;
+  path: {
+    source_id: string;
+  };
+};
+
+export type UpdateSourceResponse = SourceRead;
+
+export type UpdateSourceError = HTTPValidationError;

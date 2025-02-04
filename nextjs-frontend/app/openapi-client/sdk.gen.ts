@@ -49,6 +49,14 @@ import type {
   DeleteItemData,
   DeleteItemError,
   DeleteItemResponse,
+  ReadSourcesError,
+  ReadSourcesResponse,
+  CreateSourceData,
+  CreateSourceError,
+  CreateSourceResponse,
+  UpdateSourceData,
+  UpdateSourceError,
+  UpdateSourceResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -295,5 +303,53 @@ export const deleteItem = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/items/{item_id}",
+  });
+};
+
+/**
+ * Read Sources
+ */
+export const readSources = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    ReadSourcesResponse,
+    ReadSourcesError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/sources/",
+  });
+};
+
+/**
+ * Create Source
+ */
+export const createSource = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<CreateSourceData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    CreateSourceResponse,
+    CreateSourceError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/sources/",
+  });
+};
+
+/**
+ * Update Source
+ */
+export const updateSource = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<UpdateSourceData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).put<
+    UpdateSourceResponse,
+    UpdateSourceError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/sources/{source_id}",
   });
 };
