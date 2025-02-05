@@ -212,9 +212,9 @@ export type UsersDeleteUserResponse = void;
 
 export type UsersDeleteUserError = unknown | HTTPValidationError;
 
-export type ReadRepositoryResponse = Array<RepositoryRead>;
+export type ReadRepositoriesResponse = Array<RepositoryRead>;
 
-export type ReadRepositoryError = unknown;
+export type ReadRepositoriesError = unknown;
 
 export type CreateRepositoryData = {
   body: RepositoryCreate;
@@ -233,6 +233,16 @@ export type DeleteRepositoryData = {
 export type DeleteRepositoryResponse = unknown;
 
 export type DeleteRepositoryError = HTTPValidationError;
+
+export type ReadRepositoryData = {
+  path: {
+    repository_id: string;
+  };
+};
+
+export type ReadRepositoryResponse = RepositoryRead;
+
+export type ReadRepositoryError = HTTPValidationError;
 
 export type ReadSourcesResponse = Array<SourceRead>;
 

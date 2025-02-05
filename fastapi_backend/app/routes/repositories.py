@@ -13,7 +13,7 @@ router = APIRouter(tags=["repository"])
 
 
 @router.get("/", response_model=list[RepositoryRead])
-async def read_repository(
+async def read_repositories(
     db: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ):
@@ -63,3 +63,21 @@ async def delete_repository(
     await db.commit()
 
     return {"message": "Repository successfully deleted"}
+
+
+@router.get("/{repository_id}", response_model=RepositoryRead)
+async def read_repository(
+    repository_id: UUID,
+    db: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+) -> Repository:
+    result = await db.execute(
+        select(Repository).filter(Repository.id == repository_id, Repository.user_id == user.id)
+    )
+    repository = result.scalars().first()
+
+    if not repository:
+        raise HTTPException(status_code=404, detail="Repository not found or not authorized")
+
+    return repository
+
