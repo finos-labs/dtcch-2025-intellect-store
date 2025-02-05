@@ -41,14 +41,17 @@ import type {
   UsersDeleteUserData,
   UsersDeleteUserError,
   UsersDeleteUserResponse,
-  ReadRepositoryError,
-  ReadRepositoryResponse,
+  ReadRepositoriesError,
+  ReadRepositoriesResponse,
   CreateRepositoryData,
   CreateRepositoryError,
   CreateRepositoryResponse,
   DeleteRepositoryData,
   DeleteRepositoryError,
   DeleteRepositoryResponse,
+  ReadRepositoryData,
+  ReadRepositoryError,
+  ReadRepositoryResponse,
   ReadSourcesError,
   ReadSourcesResponse,
   CreateSourceData,
@@ -262,14 +265,14 @@ export const usersDeleteUser = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Read Repository
+ * Read Repositories
  */
-export const readRepository = <ThrowOnError extends boolean = false>(
+export const readRepositories = <ThrowOnError extends boolean = false>(
   options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ReadRepositoryResponse,
-    ReadRepositoryError,
+    ReadRepositoriesResponse,
+    ReadRepositoriesError,
     ThrowOnError
   >({
     ...options,
@@ -302,6 +305,22 @@ export const deleteRepository = <ThrowOnError extends boolean = false>(
   return (options?.client ?? client).delete<
     DeleteRepositoryResponse,
     DeleteRepositoryError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/repositories/{repository_id}",
+  });
+};
+
+/**
+ * Read Repository
+ */
+export const readRepository = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<ReadRepositoryData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    ReadRepositoryResponse,
+    ReadRepositoryError,
     ThrowOnError
   >({
     ...options,

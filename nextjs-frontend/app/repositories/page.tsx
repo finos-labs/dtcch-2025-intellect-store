@@ -1,19 +1,11 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableHeader,
-} from "@/components/ui/table";
-import { fetchRepositories} from "@/components/actions/repository-action";
-import { DeleteButton } from "./deleteButton";
-import { ReadRepositoryResponse } from "@/app/openapi-client";
+import { fetchRepositories } from "@/components/actions/repository-action";
+import { ReadRepositoriesResponse } from "@/app/openapi-client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { RepositoriesTable } from "./repositoriesTable";
 
 export default async function RepositoriesPage() {
-  const repositories = (await fetchRepositories()) as ReadRepositoryResponse;
+  const repositories = (await fetchRepositories()) as ReadRepositoriesResponse;
 
   return (
     <div>
@@ -30,67 +22,8 @@ export default async function RepositoriesPage() {
         </Link>
       </div>
 
-      <section className="p-6 bg-white rounded-lg shadow-lg mt-8">
-        <Table className="min-w-full text-sm">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[120px]">Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-center">Link</TableHead>
-              <TableHead className="text-center">Pull Request</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {!repositories.length ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            ) : (
-              repositories.map((repository, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Link 
-                      href={`/repositories/${repository.id}`}
-                      className="text-blue-500 hover:underline"
-                    >
-                      {repository.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell>{repository.description}</TableCell>
-                  <TableCell className="text-center">
-                    <a
-                      href={repository.link}
-                      className="text-blue-500 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {repository.link}
-                    </a>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {repository.pull_request_link ? (
-                      <button
-                        onClick={() =>
-                          window.open(
-                            repository.pull_request_link!,
-                            "_blank",
-                            "noopener,noreferrer"
-                          )
-                        }
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded"
-                      >
-                        View PR
-                      </button>
-                    ) : null}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </section>
+      {/* Pass the fetched data to our Client Component */}
+      <RepositoriesTable repositories={repositories} />
     </div>
   );
 }

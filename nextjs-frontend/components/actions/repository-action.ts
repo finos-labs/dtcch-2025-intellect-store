@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { readRepository, deleteRepository, createRepository } from "@/app/clientService";
+import { readRepositories, deleteRepository, createRepository, readRepository } from "@/app/clientService";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { repositorySchema } from "@/lib/definitions";
@@ -14,7 +14,7 @@ export async function fetchRepositories() {
     return { message: "No access token found" };
   }
 
-  const { data, error } = await readRepository({
+  const { data, error } = await readRepositories({
     headers: {
       Authorization: `Bearer ${token}`,
     },

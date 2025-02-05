@@ -680,8 +680,8 @@
         "tags": [
           "repository"
         ],
-        "summary": "Read Repository",
-        "operationId": "read_repository",
+        "summary": "Read Repositories",
+        "operationId": "read_repositories",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -692,7 +692,7 @@
                     "$ref": "#/components/schemas/RepositoryRead"
                   },
                   "type": "array",
-                  "title": "Response Repository-Read Repository"
+                  "title": "Response Repository-Read Repositories"
                 }
               }
             }
@@ -779,6 +779,52 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "repository"
+        ],
+        "summary": "Read Repository",
+        "operationId": "read_repository",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "repository_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Repository Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepositoryRead"
+                }
               }
             }
           },
