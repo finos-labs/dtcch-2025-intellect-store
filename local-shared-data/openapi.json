@@ -675,13 +675,13 @@
         }
       }
     },
-    "/items/": {
+    "/repositories/": {
       "get": {
         "tags": [
-          "item"
+          "repository"
         ],
-        "summary": "Read Item",
-        "operationId": "read_item",
+        "summary": "Read Repository",
+        "operationId": "read_repository",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -689,10 +689,10 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/ItemRead"
+                    "$ref": "#/components/schemas/RepositoryRead"
                   },
                   "type": "array",
-                  "title": "Response Item-Read Item"
+                  "title": "Response Repository-Read Repository"
                 }
               }
             }
@@ -706,15 +706,15 @@
       },
       "post": {
         "tags": [
-          "item"
+          "repository"
         ],
-        "summary": "Create Item",
-        "operationId": "create_item",
+        "summary": "Create Repository",
+        "operationId": "create_repository",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ItemCreate"
+                "$ref": "#/components/schemas/RepositoryCreate"
               }
             }
           },
@@ -726,7 +726,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ItemRead"
+                  "$ref": "#/components/schemas/RepositoryRead"
                 }
               }
             }
@@ -749,13 +749,13 @@
         ]
       }
     },
-    "/items/{item_id}": {
+    "/repositories/{repository_id}": {
       "delete": {
         "tags": [
-          "item"
+          "repository"
         ],
-        "summary": "Delete Item",
-        "operationId": "delete_item",
+        "summary": "Delete Repository",
+        "operationId": "delete_repository",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -763,13 +763,13 @@
         ],
         "parameters": [
           {
-            "name": "item_id",
+            "name": "repository_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
               "format": "uuid",
-              "title": "Item Id"
+              "title": "Repository Id"
             }
           }
         ],
@@ -1090,11 +1090,30 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "ItemCreate": {
+      "RepositoryCreate": {
         "properties": {
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "link": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Link"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
           },
           "description": {
             "anyOf": [
@@ -1107,29 +1126,52 @@
             ],
             "title": "Description"
           },
-          "quantity": {
+          "pull_request_link": {
             "anyOf": [
               {
-                "type": "integer"
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Quantity"
+            "title": "Pull Request Link"
           }
         },
         "type": "object",
         "required": [
-          "name"
+          "name",
+          "link"
         ],
-        "title": "ItemCreate"
+        "title": "RepositoryCreate"
       },
-      "ItemRead": {
+      "RepositoryRead": {
         "properties": {
           "name": {
             "type": "string",
             "title": "Name"
+          },
+          "link": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Link"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
           },
           "description": {
             "anyOf": [
@@ -1142,16 +1184,19 @@
             ],
             "title": "Description"
           },
-          "quantity": {
+          "pull_request_link": {
             "anyOf": [
               {
-                "type": "integer"
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Quantity"
+            "title": "Pull Request Link"
           },
           "id": {
             "type": "string",
@@ -1167,10 +1212,11 @@
         "type": "object",
         "required": [
           "name",
+          "link",
           "id",
           "user_id"
         ],
-        "title": "ItemRead"
+        "title": "RepositoryRead"
       },
       "SourceCreate": {
         "properties": {

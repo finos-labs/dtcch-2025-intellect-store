@@ -1,12 +1,9 @@
-from app.routes import repositories
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
-from app.database import Base
-
 
 class Base(DeclarativeBase):
     pass
@@ -25,6 +22,7 @@ class Repository(Base):
     description = Column(String, nullable=True)
     link = Column(String, nullable=False)
     last_updated = Column(DateTime, nullable=True)
+    pull_request_link = Column(String, nullable=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
 
     user = relationship("User", back_populates="repositories")

@@ -34,20 +34,6 @@ export type HTTPValidationError = {
   detail?: Array<ValidationError>;
 };
 
-export type ItemCreate = {
-  name: string;
-  description?: string | null;
-  quantity?: number | null;
-};
-
-export type ItemRead = {
-  name: string;
-  description?: string | null;
-  quantity?: number | null;
-  id: string;
-  user_id: string;
-};
-
 export type login = {
   grant_type?: string | null;
   username: string;
@@ -55,6 +41,24 @@ export type login = {
   scope?: string;
   client_id?: string | null;
   client_secret?: string | null;
+};
+
+export type RepositoryCreate = {
+  name: string;
+  link: string;
+  last_updated?: string | null;
+  description?: string | null;
+  pull_request_link?: string | null;
+};
+
+export type RepositoryRead = {
+  name: string;
+  link: string;
+  last_updated?: string | null;
+  description?: string | null;
+  pull_request_link?: string | null;
+  id: string;
+  user_id: string;
 };
 
 export type SourceCreate = {
@@ -208,27 +212,27 @@ export type UsersDeleteUserResponse = void;
 
 export type UsersDeleteUserError = unknown | HTTPValidationError;
 
-export type ReadItemResponse = Array<ItemRead>;
+export type ReadRepositoryResponse = Array<RepositoryRead>;
 
-export type ReadItemError = unknown;
+export type ReadRepositoryError = unknown;
 
-export type CreateItemData = {
-  body: ItemCreate;
+export type CreateRepositoryData = {
+  body: RepositoryCreate;
 };
 
-export type CreateItemResponse = ItemRead;
+export type CreateRepositoryResponse = RepositoryRead;
 
-export type CreateItemError = HTTPValidationError;
+export type CreateRepositoryError = HTTPValidationError;
 
-export type DeleteItemData = {
+export type DeleteRepositoryData = {
   path: {
-    item_id: string;
+    repository_id: string;
   };
 };
 
-export type DeleteItemResponse = unknown;
+export type DeleteRepositoryResponse = unknown;
 
-export type DeleteItemError = HTTPValidationError;
+export type DeleteRepositoryError = HTTPValidationError;
 
 export type ReadSourcesResponse = Array<SourceRead>;
 

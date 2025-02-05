@@ -1,17 +1,8 @@
 import uuid
 from datetime import datetime
-try:
-    from fastapi_users import schemas
-except ImportError:
-    # Add this to your requirements.txt:
-    # fastapi-users
-    pass
-try:
-    from pydantic import BaseModel, HttpUrl
-except ImportError:
-    # Add this to your requirements.txt:
-    # pydantic
-    pass
+from fastapi_users import schemas
+from pydantic import BaseModel, HttpUrl
+
 from uuid import UUID
 
 
@@ -29,9 +20,10 @@ class UserUpdate(schemas.BaseUserUpdate):
 
 class RepositoryBase(BaseModel):
     name: str
+    link: HttpUrl
+    last_updated: datetime | None = None
     description: str | None = None
-    quantity: int | None = None
-
+    pull_request_link: HttpUrl | None = None
 
 class RepositoryCreate(RepositoryBase):
     pass

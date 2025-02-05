@@ -41,14 +41,14 @@ import type {
   UsersDeleteUserData,
   UsersDeleteUserError,
   UsersDeleteUserResponse,
-  ReadItemError,
-  ReadItemResponse,
-  CreateItemData,
-  CreateItemError,
-  CreateItemResponse,
-  DeleteItemData,
-  DeleteItemError,
-  DeleteItemResponse,
+  ReadRepositoryError,
+  ReadRepositoryResponse,
+  CreateRepositoryData,
+  CreateRepositoryError,
+  CreateRepositoryResponse,
+  DeleteRepositoryData,
+  DeleteRepositoryError,
+  DeleteRepositoryResponse,
   ReadSourcesError,
   ReadSourcesResponse,
   CreateSourceData,
@@ -262,50 +262,50 @@ export const usersDeleteUser = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Read Item
+ * Read Repository
  */
-export const readItem = <ThrowOnError extends boolean = false>(
+export const readRepository = <ThrowOnError extends boolean = false>(
   options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ReadItemResponse,
-    ReadItemError,
+    ReadRepositoryResponse,
+    ReadRepositoryError,
     ThrowOnError
   >({
     ...options,
-    url: "/items/",
+    url: "/repositories/",
   });
 };
 
 /**
- * Create Item
+ * Create Repository
  */
-export const createItem = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<CreateItemData, ThrowOnError>,
+export const createRepository = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<CreateRepositoryData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
-    CreateItemResponse,
-    CreateItemError,
+    CreateRepositoryResponse,
+    CreateRepositoryError,
     ThrowOnError
   >({
     ...options,
-    url: "/items/",
+    url: "/repositories/",
   });
 };
 
 /**
- * Delete Item
+ * Delete Repository
  */
-export const deleteItem = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DeleteItemData, ThrowOnError>,
+export const deleteRepository = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<DeleteRepositoryData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<
-    DeleteItemResponse,
-    DeleteItemError,
+    DeleteRepositoryResponse,
+    DeleteRepositoryError,
     ThrowOnError
   >({
     ...options,
-    url: "/items/{item_id}",
+    url: "/repositories/{repository_id}",
   });
 };
 

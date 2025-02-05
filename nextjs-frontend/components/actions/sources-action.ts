@@ -1,12 +1,12 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { readItem, deleteItem, createItem } from "@/app/clientService";
+import { readSources, deleteSource, createSource } from "@/app/clientService";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { itemSchema } from "@/lib/definitions";
+import { sourceSchema } from "@/lib/definitions";
 
-export async function fetchItems() {
+export async function fetchSources() {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
 
@@ -14,7 +14,7 @@ export async function fetchItems() {
     return { message: "No access token found" };
   }
 
-  const { data, error } = await readItem({
+  const { data, error } = await readSources({
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -27,7 +27,7 @@ export async function fetchItems() {
   return data;
 }
 
-export async function removeItem(id: string) {
+export async function removeSource(id: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
 
@@ -35,22 +35,22 @@ export async function removeItem(id: string) {
     return { message: "No access token found" };
   }
 
-  const { error } = await deleteItem({
+  const { error } = await deleteSource({
     headers: {
       Authorization: `Bearer ${token}`,
     },
     path: {
-      item_id: id,
+      source_id: id,
     },
   });
 
   if (error) {
     return { message: error };
   }
-  revalidatePath("/repositories");
+  revalidatePath("/dashboard");
 }
 
-export async function addItem(prevState: {}, formData: FormData) {
+export async function addSource(prevState: {}, formData: FormData) {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
 
@@ -58,17 +58,17 @@ export async function addItem(prevState: {}, formData: FormData) {
     return { message: "No access token found" };
   }
 
-  const validatedFields = itemSchema.safeParse({
+  const validatedFields = sourceSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
-    quantity: formData.get("quantity"),
+    link: formData.get("link"),
   });
 
   if (!validatedFields.success) {
     return { errors: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { name, description, quantity } = validatedFields.data;
+  const { name, description,link } = validatedFields.data;
 
   const input = {
     headers: {
@@ -77,12 +77,13 @@ export async function addItem(prevState: {}, formData: FormData) {
     body: {
       name,
       description,
-      quantity,
+      link,
+      last_updated: null,
     },
   };
-  const { error } = await createItem(input);
+  const { error } = await createSource(input);
   if (error) {
     return { message: `${error.detail}` };
   }
-  redirect(`/repositories`);
+  redirect(`/sources`);
 }
