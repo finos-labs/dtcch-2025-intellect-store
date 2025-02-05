@@ -2,6 +2,67 @@ from DataModels import Account, SecurityPosition, Transaction, CollateralLink, A
 
 import random
 
+import numpy as np
+import pandas as pd
+
+
+
+def gen_init_conditions(batch):
+    all_securities = batch["security"].unique()
+    all_parties = pd.concat([batch["to"], batch["from"]]).unique()
+
+    cash_accounts = []
+    security_positions = []
+    sec_collateral_links = []
+
+    for party in all_parties:
+        party_buys = batch.loc[batch["to"] == party]
+        avg_cash_sell = np.mean(np.multiply(party_buys["price"], party_buys["quantity"]))
+
+        init_cash = max(10000, 1.5*avg_cash_sell + np.random.normal(0.5*avg_cash_sell, 0.5*avg_cash_sell))
+        cash_credit_limit = max(5000, init_cash + np.random.normal(0.5*init_cash, 0.5*init_cash))
+
+        p_acc = Account(
+            id=hash(party),
+            owner_id=hash(party),  # For simplicity, we use the same value.
+            initial_cash=int(np.floor(init_cash)),
+            credit_limit=int(np.floor(cash_credit_limit))
+            )
+        cash_accounts.append(p_acc)
+
+        for security in all_securities:
+            party_sells = batch.loc[(batch["from"] == party) & (batch["security"] == security)]
+
+            if len(party_sells.index) > 0:
+                avg_sec_sell = np.mean(party_sells["quantity"])
+                init_sec = max(500, 1.5*avg_sec_sell + np.random.normal(0.5*avg_sec_sell, 0.5*avg_sec_sell))
+            else:
+                init_sec = 500 * int(np.random.random() > 0.75)
+            
+            p_sec_pos = SecurityPosition(
+                id=hash(security),
+                account_id=hash(party),
+                initial_quantity=int(np.floor(init_sec))
+            )
+            security_positions.append(p_sec_pos)
+
+
+            if (len(party_sells.index) > 0) and (avg_sec_sell >= 0.75*np.mean(batch.loc[batch["from"] == party]["quantity"])) and (np.random.random() > 0.5):
+                c_link_sec_party = CollateralLink(
+                    id=np.random.randint(0, 10000000),
+                    associated_account=hash(party),
+                    lot_size=20,
+                    valuation=0.95*np.mean(party_sells["price"]),
+                    q_min=0,
+                    q_lim=int(np.floor((0.5 + np.random.random())*init_sec)),
+                    triggered_transactions=[],  # to be set later.
+                    security_id=hash(security)
+                )
+                sec_collateral_links.append(c_link_sec_party)
+
+    return cash_accounts, security_positions, sec_collateral_links
+
+
 def generate_ntsp_input(
     n_transactions: int,
     n_collateral_links: int,
