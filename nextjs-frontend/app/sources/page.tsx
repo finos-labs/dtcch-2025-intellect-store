@@ -69,10 +69,6 @@ export default async function SourcesPage() {
                       ? new Date(source.last_updated).toLocaleString()
                       : "N/A"}
                   </TableCell>
-
-                  {/* 
-
-                  */}
                   <TableCell
                     className="text-center"
                   >
