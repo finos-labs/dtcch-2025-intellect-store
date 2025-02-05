@@ -12,6 +12,7 @@ dependencies = [
     "fastapi-users-db-sqlalchemy>=6.0.1",
     "pydantic-settings>=2.5.2,<3",
     "fastapi-mail>=1.4.1,<2",
+    "aiomysql>=0.2.0",
 ]
 
 [dependency-groups]
