@@ -31,10 +31,11 @@ async def create_repository(
     repository_data = repository.model_dump()
 
     # Only convert to string if the field is not None
-    if repository_data.get('link') is not None:
+    if 'link' in repository_data:
         repository_data['link'] = str(repository_data['link'])
-    if 'pull_request_link' in repository_data:
-        repository_data['pull_request_link'] = str(repository_data['pull_request_link'])
+    if repository_data["pull_request_link"] == "None":
+        repository_data["pull_request_link"] = None
+    repository_data['pull_request_link'] = None
     print(f"Creating repository with data: {repository_data}")
     db_repository = Repository(**repository_data, user_id=user.id)
     print(f"Creating repository: {db_repository}")

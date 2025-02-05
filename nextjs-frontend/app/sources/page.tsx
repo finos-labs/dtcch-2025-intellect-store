@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -22,18 +20,8 @@ import Link from "next/link";
 import { fetchSources } from "@/components/actions/sources-action";
 import { ReadSourcesResponse } from "@/app/openapi-client";
 
-export default function SourcesPage() {
-  const [sources, setSources] = useState<ReadSourcesResponse>([]);
-  const router = useRouter();
-
-  // Fetch data client-side
-  useEffect(() => {
-    async function loadSources() {
-      const data = await fetchSources();
-      setSources(data);
-    }
-    loadSources();
-  }, []);
+export default async function SourcesPage() {
+  const sources = (await fetchSources()) as ReadSourcesResponse;
 
   return (
     <div>
@@ -72,7 +60,6 @@ export default function SourcesPage() {
                 <TableRow
                   key={source.id}
                   // Make the entire row clickable
-                  onClick={() => router.push(`/sources/${source.id}`)}
                   className="cursor-pointer hover:bg-gray-50"
                 >
                   <TableCell>{source.name}</TableCell>
@@ -84,12 +71,10 @@ export default function SourcesPage() {
                   </TableCell>
 
                   {/* 
-                    Stop the click from propagating to the row’s onClick
-                    so that "Actions" are still clickable without redirect.
+
                   */}
                   <TableCell
                     className="text-center"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     <DropdownMenu>
                       <DropdownMenuTrigger className="cursor-pointer p-1 text-gray-600 hover:text-gray-800">
