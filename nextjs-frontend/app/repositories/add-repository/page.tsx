@@ -2,24 +2,24 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addItem } from "@/components/actions/items-action";
+import { addRepository } from "@/components/actions/repository-action";
 import { useActionState } from "react";
 import { SubmitButton } from "@/components/ui/submitButton";
 
 const initialState = { message: "" };
 
-export default function CreateItemPage() {
-  const [state, dispatch] = useActionState(addItem, initialState);
+export default function CreateRepositoryPage() {
+  const [state, dispatch] = useActionState(addRepository, initialState);
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <div className="max-w-4xl mx-auto p-6">
         <header className="mb-6">
           <h1 className="text-3xl font-semibold text-gray-800 dark:text-white">
-            Create New Item
+            Create New Repository
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400">
-            Enter the details of the new item below.
+            Enter the details of the new repository below.
           </p>
         </header>
 
@@ -33,13 +33,13 @@ export default function CreateItemPage() {
                 htmlFor="name"
                 className="text-gray-700 dark:text-gray-300"
               >
-                Item Name
+                Repository Name
               </Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Item name"
+                placeholder="Repository name"
                 required
                 className="w-full border-gray-300 dark:border-gray-600"
               />
@@ -53,13 +53,13 @@ export default function CreateItemPage() {
                 htmlFor="description"
                 className="text-gray-700 dark:text-gray-300"
               >
-                Item Description
+                Repository Description
               </Label>
               <Input
                 id="description"
                 name="description"
                 type="text"
-                placeholder="Description of the item"
+                placeholder="Description of the repository"
                 required
                 className="w-full border-gray-300 dark:border-gray-600"
               />
@@ -72,26 +72,26 @@ export default function CreateItemPage() {
 
             <div className="space-y-3">
               <Label
-                htmlFor="quantity"
+                htmlFor="link"
                 className="text-gray-700 dark:text-gray-300"
               >
-                Quantity
+                Repository Link
               </Label>
               <Input
-                id="quantity"
-                name="quantity"
-                type="number"
-                placeholder="Quantity"
+                id="link"
+                name="link"
+                type="url"
+                placeholder="Repository URL"
                 required
                 className="w-full border-gray-300 dark:border-gray-600"
               />
-              {state.errors?.quantity && (
-                <p className="text-red-500 text-sm">{state.errors.quantity}</p>
+              {state.errors?.link && (
+                <p className="text-red-500 text-sm">{state.errors.link}</p>
               )}
             </div>
           </div>
 
-          <SubmitButton text="Create Item" />
+          <SubmitButton text="Create Repository" />
 
           {state?.message && (
             <div className="mt-2 text-center text-sm text-red-500">

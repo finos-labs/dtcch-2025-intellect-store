@@ -1,10 +1,12 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableRow,
   TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
   DropdownMenu,
@@ -12,64 +14,71 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { fetchItems } from "@/components/actions/items-action";
 import { DeleteButton } from "./deleteButton";
-import { ReadItemResponse } from "@/app/openapi-client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { fetchSources } from "@/components/actions/sources-action";
+import { ReadSourcesResponse } from "@/app/openapi-client";
 
-export default async function DashboardPage() {
-  const items = (await fetchItems()) as ReadItemResponse;
+export default async function SourcesPage() {
+  const sources = (await fetchSources()) as ReadSourcesResponse;
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Welcome to your Dashboard</h2>
+      <h2 className="text-2xl font-semibold mb-6">My sources</h2>
       <p className="text-lg mb-6">
-        Here, you can see the overview of your items and manage them.
+        Here, you can see the overview of your sources and manage them.
       </p>
 
       <div className="mb-6">
-        <Link href="/dashboard/add-item">
+        <Link href="/sources/add-source">
           <Button variant="outline" className="text-lg px-4 py-2">
-            Add New Item
+            Add New Source
           </Button>
         </Link>
       </div>
 
       <section className="p-6 bg-white rounded-lg shadow-lg mt-8">
-        <h2 className="text-xl font-semibold mb-4">Items</h2>
         <Table className="min-w-full text-sm">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[120px]">Name</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead className="text-center">Quantity</TableHead>
+              <TableHead className="w-[150px]">Last Updated</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!items.length ? (
+            {!sources.length ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center">
                   No results.
                 </TableCell>
               </TableRow>
             ) : (
-              items.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.description}</TableCell>
-                  <TableCell className="text-center">{item.quantity}</TableCell>
-                  <TableCell className="text-center">
+              sources.map((source) => (
+                <TableRow
+                  key={source.id}
+                  // Make the entire row clickable
+                  className="cursor-pointer hover:bg-gray-50"
+                >
+                  <TableCell>{source.name}</TableCell>
+                  <TableCell>{source.description}</TableCell>
+                  <TableCell>
+                    {source.last_updated
+                      ? new Date(source.last_updated).toLocaleString()
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell
+                    className="text-center"
+                  >
                     <DropdownMenu>
                       <DropdownMenuTrigger className="cursor-pointer p-1 text-gray-600 hover:text-gray-800">
                         <span className="text-lg font-semibold">...</span>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="p-2">
-                        <DropdownMenuItem disabled={true}>
-                          Edit
-                        </DropdownMenuItem>
-                        <DeleteButton itemId={item.id} />
+                        <DropdownMenuItem disabled>Edit</DropdownMenuItem>
+                        <DeleteButton sourceId={source.id} />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

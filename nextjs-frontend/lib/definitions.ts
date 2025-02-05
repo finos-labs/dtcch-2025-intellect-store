@@ -31,14 +31,30 @@ export const loginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
 });
 
-export const itemSchema = z.object({
+export const repositorySchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-  description: z.string().min(1, { message: "Description is required" }),
-  quantity: z
-    .string()
-    .min(1, { message: "Quantity is required" })
-    .transform((val) => parseInt(val, 10)) // Convert to integer
-    .refine((val) => Number.isInteger(val) && val > 0, {
-      message: "Quantity must be a positive integer",
-    }),
+  link: z.string().url({ message: "Link must be a valid URL" }),
+  description: z.string().optional(), // This is already optional
+  last_updated: z.string().optional().refine((val) => {
+    if (val) {
+      return !isNaN(Date.parse(val));
+    }
+    return true;
+  }, { message: "Last updated must be a valid date" }),
+  pull_request_link: z.string().optional(), // Make this optional
+});
+
+export const sourceSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  link: z.string().url({ message: "Link must be a valid URL" }),
+  description: z.string().optional(),
+  last_updated: z.string().optional().refine((val) => {
+    // Optional field, can be a valid ISO date string
+    if (val) {
+      return !isNaN(Date.parse(val));
+    }
+    return true;
+  }, {
+    message: "Last updated must be a valid date",
+  }),
 });

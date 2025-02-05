@@ -1,15 +1,15 @@
 "use client";
 
-import { removeItem } from "@/components/actions/items-action";
+import { removeSource } from "@/components/actions/sources-action";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface DeleteButtonProps {
-  itemId: string;
+  sourceId: string;
 }
 
-export function DeleteButton({ itemId }: DeleteButtonProps) {
+export function DeleteButton({ sourceId }: DeleteButtonProps) {
   const handleDelete = async () => {
-    await removeItem(itemId);
+    await removeSource(sourceId);
   };
 
   return (
