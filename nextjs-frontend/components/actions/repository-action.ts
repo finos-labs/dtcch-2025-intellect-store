@@ -90,3 +90,27 @@ export async function addRepository(prevState: {}, formData: FormData) {
   }
   redirect(`/repositories`);
 }
+
+export async function fetchRepository(id: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+
+  if (!token) {
+    return { message: "No access token found" };
+  }
+
+  const { data, error } = await readRepository({
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    path: {
+      repository_id: id,
+    },
+  });
+
+  if (error) {
+    return { message: error };
+  }
+
+  return data;
+}

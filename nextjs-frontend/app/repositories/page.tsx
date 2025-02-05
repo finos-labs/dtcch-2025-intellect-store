@@ -50,7 +50,14 @@ export default async function RepositoriesPage() {
             ) : (
               repositories.map((repository, index) => (
                 <TableRow key={index}>
-                  <TableCell>{repository.name}</TableCell>
+                  <TableCell>
+                    <Link 
+                      href={`/repositories/${repository.id}`}
+                      className="text-blue-500 hover:underline"
+                    >
+                      {repository.name}
+                    </Link>
+                  </TableCell>
                   <TableCell>{repository.description}</TableCell>
                   <TableCell className="text-center">
                     <a
