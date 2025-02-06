@@ -176,7 +176,7 @@ def add_security_position_constraints(solver, ntsp_data: NTSPInput, x: Dict[int,
 # Main Model Solver Function
 # ============================================================
 
-def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5):
+def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5, print_console = False):
     """
     Builds and solves the complete NTSP model.
 
@@ -233,23 +233,22 @@ def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5):
             metrics["total_loan"] += collateral_total
 
 
-        console_print = False
-        if console_print:
+        if print_console:
             print("Solution Found!")
             print("Objective Value =", solver.Objective().Value())
-            print("\nTransaction Settlement Decisions (x variables):")
+            print("\nTransaction Settlement Decisions:")
             for t in ntsp_data.transactions:
-                print(f"  Transaction {t.id} (Security {t.security_id}): x = {int(x[t.id].solution_value())}")
+                print(f"  Transaction {t.id}: x = {"Success" if int(x[t.id].solution_value()) else "Failed"}")
 
-            print("\nAccount Cash Status (need variables):")
-            for acc in ntsp_data.accounts:
-                print(f"  Account {acc.id} (Owner {acc.owner_id}): need = {need[acc.id].solution_value()}")
+            # print("\nAccount Cash Status (need variables):")
+            # for acc in ntsp_data.accounts:
+            #     print(f"  Account {acc.id} (Owner {acc.owner_id}): need = {need[acc.id].solution_value()}")
+
             print("\nCollateral Link Decisions:")
             for l in ntsp_data.collateral_links:
                 if int(z[l.id].solution_value()):
-                    print(f"  Collateral Link {l.id} (Security {l.security_id}): y = {y[l.id].solution_value()}, "
-                        f"activated z = {z[l.id].solution_value()}, "
-                        f"For account {l.associated_account}, triggered by {l.triggered_transactions}")
+                    print(f"  Collateral Link {l.id} (Security {l.security_id}): Lots amount (y) = {y[l.id].solution_value()}, "
+                        f"For account {l.associated_account}. \tUsed in {len(l.triggered_transactions)} transactions.")
                 
             print("\nSecurity Position Summary:")
             T_debit_sec, T_credit_sec = get_security_transaction_lookups(ntsp_data)

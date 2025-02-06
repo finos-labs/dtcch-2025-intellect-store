@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def avg_metric(batch_metrics, metric_name):
+    return np.mean([bm[metric_name] for bm in batch_metrics])
+
+
 def plot_before_after(batch_metrics_1, batch_metrics_2):
     l1 = len(batch_metrics_1)
     l2 = len(batch_metrics_2)
@@ -57,6 +61,15 @@ def plot_single_run(batch_metrics):
 
     ax.set_title('Batch transaction settlement optimization')
 
+    str1 = f'Avg Settlement Success:  {"{0:0.2f}".format(100*avg_metric(batch_metrics, "settle_rate"))}%\n'
+    str2 = f'Avg Auto-Collateral Used:  ${"{0:0.0f}".format(avg_metric(batch_metrics, "total_loan"))}'
+        
+    # these are matplotlib.patch.Patch properties
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+
+    # place a text box in upper left in axes coords
+    
+
     ax.legend(loc=2)
     ax2.legend(loc=1)
     ax2.set_ylim([20, 100])
@@ -65,6 +78,10 @@ def plot_single_run(batch_metrics):
     ax.set_xlabel("Batch №")
     ax.set_ylabel("$")
     ax2.set_ylabel("%")
+
+    ax2.text(0.3, 0.95, str1 + str2, transform=ax.transAxes, fontsize=12,
+            verticalalignment='top', bbox=props)
+
     plt.show()
 
 
