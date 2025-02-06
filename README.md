@@ -2,15 +2,36 @@
 
 # FINOS DTCC Hackathon
 
-
 ## Project Name
-@ivor add instructions here
+Compliance Reimagined: Leverage LLMs to align code with ever-evolving regulations
 
 ### Project Details
-@ivor add instructions here
+The Proof of Concept (PoC) demonstrates how Large Language Models (LLMs) can automate the end-to-end process of aligning code with evolving regulatory changes, specifically in the context of settlement optimization.
+Scope:
+1. Automate regulatory change analysis from official SEC documents.
+2. Use LLMs to interpret and extract key compliance requirements.
+3. Automatically adjust settlement optimization code based on identified changes.
+4. Streamline the review and approval process for business and technical stakeholders.
+5. Compare pre- and post-regulation implementation impacts on key settlement metrics.
+
+Expected outcome:
+1. Faster adaptation to regulatory updates.
+2. Reduced manual effort in compliance-driven code changes.
+3. Increased transparency in decision-making for settlement optimization.
 
 ### Team Information
-@ivor add our team information here incl linkedin
+
+* Bruno Almeida, https://www.linkedin.com/in/bfmalmeida/
+* David Cohen, https://www.linkedin.com/in/dncohen/
+* Diogo Saraiva, https://www.linkedin.com/in/disaraiva/
+* Hanna Zubko, https://www.linkedin.com/in/hzubko
+* Ivor Flego, https://hr.linkedin.com/in/ivor-flego-mba-65184513b
+* Janit Sudeesh, https://www.linkedin.com/in/janit-sudeesh-a0145523a/
+* Justin Strnatko, https://www.linkedin.com/in/justin-strnatko
+* Matthias Van der Donck, https://be.linkedin.com/in/matthias-van-der-donck-9701a81b8
+* Matvii Kistaiev, https://www.linkedin.com/in/matvii-kistaiev-880041286/
+* Rohit Bhamidipati, https://www.linkedin.com/in/rohit-bhamidipati
+* Sergiu Soima, https://www.linkedin.com/in/sergiusoima/
 
 
 ## Table of Contents
