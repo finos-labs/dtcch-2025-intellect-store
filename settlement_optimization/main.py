@@ -1,7 +1,7 @@
 from Model import solve_ntsp
 from DataModels import *
-from DataInput import generate_ntsp_input, transactions_from_csv, gen_init_conditions
-
+from DataInput import generate_ntsp_input, ntsp_input_from_batch
+from DataVisual import plot_2_changes
 import pandas as pd
 
 
@@ -13,29 +13,26 @@ if __name__ == "__main__":
     #     n_securities=15
     # )
 
-    data = pd.read_csv("settlement_optimization/Data/transactions.csv")
-    batch = data.tail(200)
-    batch = batch.loc[batch["from"] != batch["to"]]
+    # batch = pd.read_csv("settlement_optimization/Data/transactions.csv").tail(200)
+ 
+    # problem = ntsp_input_from_batch(batch)
 
-    accs, sec_poss, coll_links =  gen_init_conditions(batch)
-    trans, after_links = transactions_from_csv(batch)
+    # _, _, _, _, _, metrics = solve_ntsp(problem, lambda_weight=0.25)
 
-    # print(accs)
-    # print(sec_poss)
-    # print(coll_links)
-    # print(trans)
-    # print(after_links)
+    # print(metrics)
 
-    ntsp_data = NTSPInput(
-        transactions=trans,
-        accounts=accs,
-        collateral_links=coll_links,
-        after_links=after_links,
-        security_positions=sec_poss
-    )
+    data = pd.read_csv("settlement_optimization/Data/transactions.csv").tail(12000)
+    batch_metrics = []
+    for i in range(2, 32, 1):
+        batch = data.iloc[-200*i:-200*(i-1)]
 
-    _, _, _, _, _, metrics = solve_ntsp(ntsp_data, lambda_weight=0.5)
+        problem = ntsp_input_from_batch(batch)
 
-    print(metrics)
+        _, _, _, _, _, metrics = solve_ntsp(problem, lambda_weight=0.3)
+
+        batch_metrics.append(metrics)
+
+    plot_2_changes(batch_metrics[:10], batch_metrics[10:20], batch_metrics[20:])
+
 
 

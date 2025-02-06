@@ -7,7 +7,25 @@ import pandas as pd
 
 
 
-def gen_init_conditions(batch):
+def ntsp_input_from_batch(batch):
+    accs, sec_poss, coll_links = _gen_init_conditions(batch)
+    trans, after_links = _transactions_from_csv(batch)
+
+    for cl in coll_links:
+        cl.triggered_transactions = [t.id for t in trans if t.security_id == cl.security_id]
+
+    return NTSPInput(
+        transactions=trans,
+        accounts=accs,
+        collateral_links=coll_links,
+        after_links=after_links,
+        security_positions=sec_poss
+    )
+
+
+
+
+def _gen_init_conditions(batch):
     all_securities = batch["security"].unique()
     all_parties = pd.concat([batch["to"], batch["from"]]).unique()
 
@@ -65,7 +83,7 @@ def gen_init_conditions(batch):
     return cash_accounts, security_positions, sec_collateral_links
 
 
-def transactions_from_csv(batch):
+def _transactions_from_csv(batch):
     transactions = []
 
     for index, row in batch.iterrows():
@@ -92,7 +110,7 @@ def transactions_from_csv(batch):
 
     for party in all_parties:
         party_transactions = batch.loc[(batch["from"] == party) | (batch["to"] == party)]
-        if (len(party_transactions.index) > 0.05*len(batch.index)) and (len(party_transactions.index) > 6) and (np.random.rand() > 0.65):
+        if (len(party_transactions.index) > 0.05*len(batch.index)) and (len(party_transactions.index) > 6) and (np.random.rand() > 0.75):
             for k in [0, 2, 4]:
                 linkk = AfterLink(
                     t1=party_transactions.iloc[k].name,
@@ -137,7 +155,7 @@ def generate_ntsp_input(
     Returns:
         A valid NTSPInput instance.
     """
-    random.seed(42)  # For reproducibility
+    # random.seed(42)  # For reproducibility
 
     # 1) Define a list of distinct security IDs.
     securities = list(range(101, 101 + n_securities))

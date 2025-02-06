@@ -86,8 +86,8 @@ def add_objective(solver, ntsp_data: NTSPInput, x: Dict[int, any], lambda_weight
     (Constant denominators are omitted.)
     """
     solver.Maximize(
-        lambda_weight * solver.Sum([t.weight * t.cash_amount * x[t.id] for t in ntsp_data.transactions])
-        + (1 - lambda_weight) * solver.Sum([t.weight * x[t.id] for t in ntsp_data.transactions])
+        lambda_weight * solver.Sum([t.weight * t.cash_amount * x[t.id] for t in ntsp_data.transactions]) * (1 / sum([t.weight * t.cash_amount for t in ntsp_data.transactions]))
+        + (1 - lambda_weight) * solver.Sum([t.weight * x[t.id] for t in ntsp_data.transactions]) * (1 / sum([t.weight for t in ntsp_data.transactions]))
     )
 
 
@@ -217,15 +217,30 @@ def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5):
     status = solver.Solve()
     if status in (pywraplp.Solver.OPTIMAL, pywraplp.Solver.FEASIBLE):
         metrics = { }
-        console_print = True
+        metrics["total_cashflow"] = 0
+        metrics["settle_rate"] = 0
+        for t in ntsp_data.transactions:
+            metrics["total_cashflow"] += int(x[t.id].solution_value()) * t.cash_amount
+            metrics["settle_rate"] += int(x[t.id].solution_value())
+        
+        metrics["settle_rate"] = metrics["settle_rate"] / len(ntsp_data.transactions)
+        
+        metrics["total_loan"] = 0
+        for sp in ntsp_data.security_positions:
+            collateral_total = sum(l.lot_size * y[l.id].solution_value()
+                                    for l in ntsp_data.collateral_links
+                                    if l.associated_account == sp.account_id and l.security_id == sp.id)
+            metrics["total_loan"] += collateral_total
+
+
+        console_print = False
         if console_print:
             print("Solution Found!")
             print("Objective Value =", solver.Objective().Value())
             print("\nTransaction Settlement Decisions (x variables):")
-            metrics["total_cashflow"] = 0
             for t in ntsp_data.transactions:
-                metrics["total_cashflow"] += int(x[t.id].solution_value()) * t.cash_amount
                 print(f"  Transaction {t.id} (Security {t.security_id}): x = {int(x[t.id].solution_value())}")
+
             print("\nAccount Cash Status (need variables):")
             for acc in ntsp_data.accounts:
                 print(f"  Account {acc.id} (Owner {acc.owner_id}): need = {need[acc.id].solution_value()}")
@@ -237,7 +252,6 @@ def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5):
                         f"For account {l.associated_account}, triggered by {l.triggered_transactions}")
                 
             print("\nSecurity Position Summary:")
-            metrics["total_loan"] = 0
             T_debit_sec, T_credit_sec = get_security_transaction_lookups(ntsp_data)
             for sp in ntsp_data.security_positions:
                 debit_total = sum(t.quantity * x[t.id].solution_value() for t in T_debit_sec.get((sp.account_id, sp.id), []))
@@ -245,7 +259,6 @@ def solve_ntsp(ntsp_data: NTSPInput, lambda_weight: float = 0.5):
                 collateral_total = sum(l.lot_size * y[l.id].solution_value()
                                         for l in ntsp_data.collateral_links
                                         if l.associated_account == sp.account_id and l.security_id == sp.id)
-                metrics["total_loan"] += collateral_total
                 net_flow = debit_total - credit_total
                 available = sp.initial_quantity - collateral_total
                 if net_flow != 0:
