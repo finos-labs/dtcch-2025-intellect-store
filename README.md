@@ -306,19 +306,88 @@ then apply the migration to the database:
    make docker-migrate-db
    ```
 
-## Production Deployment
+## Deployment
 
-### Overview
+### Deploy it locally
+- We can refer to the section [Running the Application](#Running the Application) so, we understand how to deploy it in our own host. That's the easiest way to test the app.
 
- TODO:Diogo, add instructions here
----
+### Deploy in EC2
+- If we want to deploy to have the application externally available, the easiest way with minor changes would be with an EC2 instance with the docker containers since it would replicate our deployment.
 
-### Frontend Deployment
+- So for that, we need to:
+1. Launch an EC2:
+````
+aws ec2 run-instances \
+    --image-id xxxxxxxxxxxxxxxxx \
+    --instance-type xxxxxxxxxxxxxxxxx \
+    --key-name xxxxxxxxxxxxxxxxx \
+    --security-groups xxxxxxxxxxxxxxxxx \
+    --associate-public-ip-address \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=my-ec2-instance}]'
+````
+2. Create a Security Group for the Load Balancer and the Load Balancer:
+````
+aws ec2 create-security-group --group-name my-lb-sg --description "Load balancer security group"
+aws ec2 authorize-security-group-ingress \
+    --group-name my-lb-sg \
+    --protocol tcp --port 80 --cidr 0.0.0.0/0
 
-1. **Deploying the Frontend**  
-   - Click the **Frontend** button above to start the deployment process.  
-   - During deployment, you will be prompted to set the `API_BASE_URL`. Use a placeholder value (e.g., `https://`) for now, as this will be updated with the backend URL later.  
-   - Complete the deployment process [here](#post-deployment-configuration).
+aws elbv2 create-load-balancer \
+    --name xxxxxxxxxxxxxxxxx \
+    --type application \
+    --subnets subnet-xxxxxxxx subnet-yyyyyyyy \
+    --security-groups my-lb-sg
+````
+3. Register the EC2 with the Load Balancer and create the listener to foward the traffic:
+````
+aws elbv2 create-target-group \
+    --name my-target-group \
+    --protocol HTTP \
+    --port 80 \
+    --vpc-id vpc-xxxxxxxxxxxxx
+
+aws elbv2 register-targets \
+    --target-group-arn arn:aws:elasticloadbalancing:region:account-id:targetgroup/my-target-group/xxxxxxxx \
+    --targets Id=i-xxxxxxxxxxxx
+
+aws elbv2 create-listener \
+    --load-balancer-arn arn:aws:elasticloadbalancing:region:account-id:loadbalancer/app/my-load-balancer/xxxxxxxx \
+    --protocol HTTP --port 80 \
+    --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:region:account-id:targetgroup/my-target-group/xxxxxxxx
+````
+4. Finally, get the Public IP in the console and send the code to the instance:
+````
+scp -i my-key-pair.pem -r * ec2-user@PUBLIC_IP:/home/ec2-user/
+````
+5. SSH to it and install the required dependencies:
+````
+ssh -i my-key-pair.pem ec2-user@PUBLIC_IP
+
+sudo yum update -y
+sudo yum install docker -y
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+````
+5. Finally, run the app:
+````
+cd /home/ec2-user/my-app
+make docker-start-backend
+make docker-start-frontend
+````
+- Here, there are still improvements that have to be perfomed like having the frontend in a Public EC2 and the backend in a private one.
+
+### Deploy in Kubernetes
+- Picking up the previous statement about separed the front-end from the backend, a good way to accomplish this and have the app more scallable and resilient is to deploy it in the kubernetes.
+
+- For that, we need to:
+1. Upload the images to a registry.
+2. Deploy a kubernetes cluster.
+3. Create the kubernetes manifests: deployment, services, ingresses and secrets.
+
+- So, deploying a kubernetes cluster would be the next steps regarding infrastructure and deployment.
+
 
 ### Backend Deployment
 
@@ -335,16 +404,6 @@ then apply the migration to the database:
 
    - Complete the deployment process [here](#post-deployment-configuration).
 
-
-## Deployment
-
-To enable Continuous Integration through Github Actions, you can use the **prod-backend-deploy.yml** and **prod-frontend-deploy.yml** files. To connect them to GitHub, simply move them to the .github/workflows/ directory.
-
-You can do it with the following commands:
-   ```bash
-    mv prod-backend-deploy.yml .github/workflows/prod-backend-deploy.yml
-    mv prod-frontend-deploy.yml .github/workflows/prod-frontend-deploy.yml
-   ```
 
 ### Prerequisites
 1. **Create a Vercel Token**:  
