@@ -2,40 +2,43 @@
 
 # FINOS DTCC Hackathon
 
-
 ## Project Name
-
+Compliance Reimagined: Leverage LLMs to align code with ever-evolving regulations
 
 ### Project Details
+The Proof of Concept (PoC) demonstrates how Large Language Models (LLMs) can automate the end-to-end process of aligning code with evolving regulatory changes, specifically in the context of settlement optimization.
+Scope:
+1. Automate regulatory change analysis from official SEC documents.
+2. Use LLMs to interpret and extract key compliance requirements.
+3. Automatically adjust settlement optimization code based on identified changes.
+4. Streamline the review and approval process for business and technical stakeholders.
+5. Compare pre- and post-regulation implementation impacts on key settlement metrics.
 
+Expected outcome:
+1. Faster adaptation to regulatory updates.
+2. Reduced manual effort in compliance-driven code changes.
+3. Increased transparency in decision-making for settlement optimization.
 
 ### Team Information
 
+* Bruno Almeida, https://www.linkedin.com/in/bfmalmeida/
+* David Cohen, https://www.linkedin.com/in/dncohen/
+* Diogo Saraiva, https://www.linkedin.com/in/disaraiva/
+* Hanna Zubko, https://www.linkedin.com/in/hzubko
+* Ivor Flego, https://hr.linkedin.com/in/ivor-flego-mba-65184513b
+* Janit Sudeesh, https://www.linkedin.com/in/janit-sudeesh-a0145523a/
+* Justin Strnatko, https://www.linkedin.com/in/justin-strnatko
+* Matthias Van der Donck, https://be.linkedin.com/in/matthias-van-der-donck-9701a81b8
+* Matvii Kistaiev, https://www.linkedin.com/in/matvii-kistaiev-880041286/
+* Rohit Bhamidipati, https://www.linkedin.com/in/rohit-bhamidipati
+* Sergiu Soima, https://www.linkedin.com/in/sergiusoima/
 
-## Using DCO to sign your commits
-
-**All commits** must be signed with a DCO signature to avoid being flagged by the DCO Bot. This means that your commit log message must contain a line that looks like the following one, with your actual name and email address:
-
-```
-Signed-off-by: John Doe <john.doe@example.com>
-```
-
-Adding the `-s` flag to your `git commit` will add that line automatically. You can also add it manually as part of your commit log message or add it afterwards with `git commit --amend -s`.
-
-See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
-
-### Helpful DCO Resources
-- [Git Tools - Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
-- [Signing commits
-](https://docs.github.com/en/github/authenticating-to-github/signing-commits)
 
 ## Table of Contents
 - [FINOS DTCC Hackathon](#finos-dtcc-hackathon)
   - [Project Name](#project-name)
     - [Project Details](#project-details)
     - [Team Information](#team-information)
-  - [Using DCO to sign your commits](#using-dco-to-sign-your-commits)
-    - [Helpful DCO Resources](#helpful-dco-resources)
   - [Table of Contents](#table-of-contents)
   - [Technology Stack](#technology-stack)
   - [Setup](#setup)
@@ -60,16 +63,10 @@ See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
     - [Running Pre-Commit Checks](#running-pre-commit-checks)
     - [Updating Pre-Commit Hooks](#updating-pre-commit-hooks)
   - [Alembic Database Migrations](#alembic-database-migrations)
-  - [GitHub Actions](#github-actions)
-    - [Secrets Configuration](#secrets-configuration)
-  - [Production Deployment](#production-deployment)
-    - [Overview](#overview)
-  - [TODO:Currently, the project uses Vercel for deployment. This should be changed to AWS.](#todocurrently-the-project-uses-vercel-for-deployment-this-should-be-changed-to-aws)
-    - [Frontend Deployment](#frontend-deployment)
-    - [Backend Deployment](#backend-deployment)
-  - [CI (GitHub Actions) Setup for Production Deployment](#ci-github-actions-setup-for-production-deployment)
-    - [Prerequisites](#prerequisites)
-    - [Backend Setup](#backend-setup)
+  - [Deployment](#deployment)
+    - [Deploy it locally](#deploy-it-locally)
+    - [Deploy it in EC2](#deploy-it-in-ec2)
+    - [Future work - Kubernetes deployment](#future-work---kubernetes-deployment)
     - [Notes](#notes)
   - [**Post-Deployment Configuration**](#post-deployment-configuration)
     - [Frontend](#frontend-1)
@@ -78,6 +75,8 @@ See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
   - [Makefile](#makefile)
     - [Available Commands](#available-commands)
   - [Important Considerations](#important-considerations)
+  - [Using DCO to sign your commits](#using-dco-to-sign-your-commits)
+    - [Helpful DCO Resources](#helpful-dco-resources)
   - [License](#license)
 
 ## Technology Stack
@@ -324,108 +323,84 @@ then apply the migration to the database:
    make docker-migrate-db
    ```
 
-## GitHub Actions
-You can find preliminary workflow configuration files inside the .github/workflows directory.TODO:customize these workflows to better suit your project's needs.
+## Deployment
 
-### Secrets Configuration
-For the workflows to function correctly, make sure to add the necessary secret keys to your GitHub repository's settings. Navigate to Settings > Secrets and variables > Actions and add the following keys:
-```
-DATABASE_URL: The connection string for your primary database.
-TEST_DATABASE_URL: The connection string for your test database.
-ACCESS_SECRET_KEY: The secret key for access token generation.
-RESET_PASSWORD_SECRET_KEY: The secret key for reset password functionality.
-VERIFICATION_SECRET_KEY: The secret key for email or user verification.
-```
+### Deploy it locally
+- We can refer to the section [Running the Application](#Running the Application) so, we understand how to deploy it in our own host. That's the easiest way to test the app.
 
-## Production Deployment
+### Deploy it in EC2
+- If we want to deploy to have the application externally available, the easiest way with minor changes would be with an EC2 instance with the docker containers since it would replicate our deployment.
 
-### Overview
+- So for that, we need to:
+1. Launch an EC2:
+````
+aws ec2 run-instances \
+    --image-id xxxxxxxxxxxxxxxxx \
+    --instance-type xxxxxxxxxxxxxxxxx \
+    --key-name xxxxxxxxxxxxxxxxx \
+    --security-groups xxxxxxxxxxxxxxxxx \
+    --associate-public-ip-address \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=my-ec2-instance}]'
+````
+2. Create a Security Group for the Load Balancer and the Load Balancer:
+````
+aws ec2 create-security-group --group-name my-lb-sg --description "Load balancer security group"
+aws ec2 authorize-security-group-ingress \
+    --group-name my-lb-sg \
+    --protocol tcp --port 80 --cidr 0.0.0.0/0
 
- TODO:Currently, the project uses Vercel for deployment. This should be changed to AWS.
----
+aws elbv2 create-load-balancer \
+    --name xxxxxxxxxxxxxxxxx \
+    --type application \
+    --subnets subnet-xxxxxxxx subnet-yyyyyyyy \
+    --security-groups my-lb-sg
+````
+3. Register the EC2 with the Load Balancer and create the listener to foward the traffic:
+````
+aws elbv2 create-target-group \
+    --name my-target-group \
+    --protocol HTTP \
+    --port 80 \
+    --vpc-id vpc-xxxxxxxxxxxxx
 
-### Frontend Deployment
+aws elbv2 register-targets \
+    --target-group-arn arn:aws:elasticloadbalancing:region:account-id:targetgroup/my-target-group/xxxxxxxx \
+    --targets Id=i-xxxxxxxxxxxx
 
-1. **Deploying the Frontend**  
-   - Click the **Frontend** button above to start the deployment process.  
-   - During deployment, you will be prompted to set the `API_BASE_URL`. Use a placeholder value (e.g., `https://`) for now, as this will be updated with the backend URL later.  
-   - Complete the deployment process [here](#post-deployment-configuration).
+aws elbv2 create-listener \
+    --load-balancer-arn arn:aws:elasticloadbalancing:region:account-id:loadbalancer/app/my-load-balancer/xxxxxxxx \
+    --protocol HTTP --port 80 \
+    --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:region:account-id:targetgroup/my-target-group/xxxxxxxx
+````
+4. Finally, get the Public IP in the console and send the code to the instance:
+````
+scp -i my-key-pair.pem -r * ec2-user@PUBLIC_IP:/home/ec2-user/
+````
+5. SSH to it and install the required dependencies:
+````
+ssh -i my-key-pair.pem ec2-user@PUBLIC_IP
 
-### Backend Deployment
+sudo yum update -y
+sudo yum install docker -y
+sudo systemctl start docker
+sudo usermod -aG docker ec2-user
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo yum install make -y
+````
+6. Finally, run the app:
+````
+cd /home/ec2-user/my-app
+make docker-start-backend
+make docker-start-frontend
+````
+- Here, there are still improvements that have to be perfomed like having the frontend in a Public EC2 and the backend in a private one.
 
-1. **Deploying the Backend**  
-   - Click the **Backend** button above to begin deployment.
-   - Set up the database first. The connection is automatically configured, so just follow the steps, and it should work by default.
-   - During the deployment process, you will be prompted to configure the following environment variables:
-
-     - **CORS_ORIGINS**  
-       - Set this to `["*"]` initially to allow all origins. You will update this with the frontend URL later.
-
-     - **ACCESS_SECRET_KEY**, **RESET_PASSWORD_SECRET_KEY**, **VERIFICATION_SECRET_KEY**  
-       - You can temporarily set these secret keys as plain strings (e.g., `examplekey`) during deployment. However, you should generate secure keys and update them after the deployment in the **Post-Deployment Configuration** section.
-
-   - Complete the deployment process [here](#post-deployment-configuration).
-
-
-## CI (GitHub Actions) Setup for Production Deployment
-
-To enable Continuous Integration through Github Actions, you can use the **prod-backend-deploy.yml** and **prod-frontend-deploy.yml** files. To connect them to GitHub, simply move them to the .github/workflows/ directory.
-
-You can do it with the following commands:
-   ```bash
-    mv prod-backend-deploy.yml .github/workflows/prod-backend-deploy.yml
-    mv prod-frontend-deploy.yml .github/workflows/prod-frontend-deploy.yml
-   ```
-
-### Prerequisites
-1. **Create a Vercel Token**:  
-   - Generate your [Vercel Access Token](https://vercel.com/account/tokens).  
-   - Save the token as `VERCEL_TOKEN` in your GitHub secrets.
-
-2. **Install Vercel CLI**:  
-   ```bash
-   pnpm i -g vercel@latest
-   ```
-3. Authenticate your account.
-    ```bash
-   vercel login
-   ```
-### Frontend Setup
-
-1. Link the nextjs-frontend Project
-
-2. Navigate to the nextjs-frontend directory and run:
-   ```bash
-   cd nextjs-frontend
-   vercel link
-   ```
-3. Follow the prompts:
-   - Link to existing project? No
-   - Modify settings? No
-
-4. Save Project IDs and Add GitHub Secrets:
-  - Open `nextjs-frontend/.vercel/project.json` and add the following to your GitHub repository secrets:
-    - `projectId` → `VERCEL_PROJECT_ID_FRONTEND`
-    - `orgId` → `VERCEL_ORG_ID`
-
-### Backend Setup
-
-1. Link the fastapi_backend Project
-
-2. Navigate to the fastapi_backend directory and run:
-   ```bash
-   cd fastapi_backend
-   vercel link --local-config=vercel.prod.json
-   ```
-   - We have a special configuration than we need to set the --local-config value.
-3. Follow the prompts:
-   - Link to existing project? No
-   - Modify settings? No
-
-4. Save Project IDs and Add GitHub Secrets:
-  - Open `fastapi_backend/.vercel/project.json` and add the following to your GitHub repository secrets:
-    - `projectId` → `VERCEL_PROJECT_ID_BACKEND`
-    - `orgId` → `VERCEL_ORG_ID` (Only in case you haven't added that before)
+### Future work - Kubernetes deployment
+The following steps are needed to deploy the application in a Kubernetes cluster:
+1. Upload the images to a registry.
+2. Deploy a kubernetes cluster.
+3. Create the kubernetes manifests: deployment, services, ingresses and secrets.
 
 ### Notes
 - Once everything is set up, simply run `git push`, and the deploy will automatically take place.
@@ -437,13 +412,11 @@ You can do it with the following commands:
 ## **Post-Deployment Configuration**
 
 ### Frontend
-   - Navigate to the **Settings** page of the deployed frontend project.  
-   - Access the **Environment Variables** section.  
+   - Access the **Environment Variables**.  
    - Update the `API_BASE_URL` variable with the backend URL once the backend deployment is complete.
 
 ### Backend
-   - Access the **Settings** page of the deployed backend project.  
-   - Navigate to the **Environment Variables** section and update the following variables with secure values:
+   - **Environment Variables** update the following variables with secure values:
 
      - **CORS_ORIGINS**  
        - Once the frontend is deployed, replace `["*"]` with the actual frontend URL.
@@ -461,19 +434,7 @@ You can do it with the following commands:
 
 ### Database Connection
 
-   1. **Choosing a Database**
-      - You can use your own database hosted on a different service or opt for the [Neon](https://neon.tech/docs/introduction) database, which integrates seamlessly with Vercel.
-
-   2. **Setting Up a Neon Database via Vercel**
-      - In the **Backend** project page on Vercel, navigate to the **Storage** section.  
-      - Select the option to **Create a Database** to provision a Neon database.
-
-   3. **Configuring the Database URL**
-      - After creating the database, retrieve the **Database URL** provided by Neon.  
-      - Include this URL in your **Environment Variables** under `DATABASE_URL`.  
-
-   4. **Migrating the Database**
-      - The database migration will happen automatically during the deployment GitHub action, setting up the necessary tables and schema.
+  TODO: @dcohen add instructions here
 
 
 ## Makefile
@@ -492,6 +453,23 @@ make help
 - **Environment Variables**: Ensure your `.env` files are up-to-date.
 - **Database Setup**: It is recommended to use Docker for running the database, even when running the backend and frontend locally, to simplify configuration and avoid potential conflicts.
 - **Consistency**: It is **not recommended** to switch between running the project locally and using Docker, as this may cause permission issues or unexpected problems. Choose one method and stick with it.
+
+## Using DCO to sign your commits
+
+**All commits** must be signed with a DCO signature to avoid being flagged by the DCO Bot. This means that your commit log message must contain a line that looks like the following one, with your actual name and email address:
+
+```
+Signed-off-by: John Doe <john.doe@example.com>
+```
+
+Adding the `-s` flag to your `git commit` will add that line automatically. You can also add it manually as part of your commit log message or add it afterwards with `git commit --amend -s`.
+
+See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
+
+### Helpful DCO Resources
+- [Git Tools - Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
+- [Signing commits
+](https://docs.github.com/en/github/authenticating-to-github/signing-commits)
 
 ## License
 
