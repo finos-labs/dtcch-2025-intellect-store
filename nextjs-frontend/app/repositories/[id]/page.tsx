@@ -2,6 +2,7 @@ import { fetchRepository } from "@/components/actions/repository-action";
 import { notFound } from "next/navigation";
 import { ReadRepositoryResponse } from "@/app/openapi-client";
 import RepositoryLayout from "./RepositoryLayout";
+import SimpleChat from "@/components/SimpleChat";
 
 interface PageProps {
   params: {
@@ -16,5 +17,10 @@ export default async function RepositoryPage({ params }: PageProps) {
     notFound();
   }
 
-  return <RepositoryLayout repository={repository} />;
+  return (
+    <>
+      <RepositoryLayout repository={repository} />
+      <SimpleChat repositoryId={params.id} />
+    </>
+  );
 }

@@ -288,7 +288,7 @@ export default function RepositoryProfile({ repository }: RepositoryProfileProps
                     <h2 id="chat-section-title" className="text-lg font-medium text-gray-900 mb-4">
                       Ask Conformix
                     </h2>
-                    <SimpleChat />
+                    <SimpleChat repositoryId={repository.id}/>
                   </div>
                 </section>
               </div>

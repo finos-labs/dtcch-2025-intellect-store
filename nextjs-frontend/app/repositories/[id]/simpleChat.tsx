@@ -13,6 +13,7 @@ import { CornerDownLeft, Mic, Paperclip } from "lucide-react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import CodeDisplayBlock from "@/components/code-display-block";
+import { askConformixRequest } from "@/components/actions/ask-conformix-action";
 
 type Message = {
   id: string;               // Unique ID for each message
@@ -21,7 +22,12 @@ type Message = {
   timestamp?: Date;         // Optional timestamp
 };
 
-export default function SimpleChat() {
+// Update the function signature to accept props
+type SimpleChatProps = {
+  repositoryId: string; // Define the prop type
+};
+
+export default function SimpleChat({ repositoryId }: SimpleChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -48,71 +54,31 @@ export default function SimpleChat() {
     }
   };
 
-  // Streaming function to request chat completion
+  // Non-streaming function to request chat completion
   const requestChatCompletion = async (userMessage: string) => {
-    // Prepare an empty assistant message so we can stream data into it
-    const assistantMessage: Message = {
-      id: String(Date.now() + 1),
-      role: "assistant",
-      content: "",
-      timestamp: new Date(),
-    };
-
     try {
-      // Example usage—adjust the body to match your backend
-      const response = await fetch("http://localhost:8000/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
-      });
+      const data = await askConformixRequest(userMessage, repositoryId); // Use repositoryId here
 
-      if (!response.body) throw new Error("No response body from server");
+      // Create a user message
+      const userMessageObj: Message = {
+        id: String(Date.now()),
+        role: "user",
+        content: userMessage,
+        timestamp: new Date(),
+      };
 
-      // Create a reader for streaming
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let newContent = "";
+      // Create an assistant message
+      const assistantMessage: Message = {
+        id: String(Date.now() + 1),
+        role: "assistant",
+        content: data?.message || "No response from assistant",
+        timestamp: new Date(),
+      };
 
-      // Push the assistant message to start streaming into it
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        try {
-          // The backend is sending JSON lines; parse them one by one
-          const lines = chunk.split("\n").filter((line) => line.trim() !== "");
-          lines.forEach((line) => {
-            const parsed = JSON.parse(line);
-
-            if (parsed.content) {
-              // Some backends might add "Assistant> " or similar. Feel free to filter that out.
-              if (parsed.content !== "Assistant> ") {
-                newContent += parsed.content;
-              }
-              // Update the assistant message content as we stream
-              setMessages((prev) => {
-                const updated = [...prev];
-                const lastIdx = updated.length - 1;
-                if (updated[lastIdx]?.role === "assistant") {
-                  updated[lastIdx] = {
-                    ...updated[lastIdx],
-                    content: newContent,
-                  };
-                }
-                return updated;
-              });
-            }
-          });
-        } catch (err) {
-          console.error("Error parsing streamed chunk:", err);
-          // Could show partial content or an error message
-        }
-      }
+      // Update messages state with both user and assistant messages
+      setMessages((prev) => [...prev, userMessageObj, assistantMessage]);
     } catch (error) {
-      console.error("Error during streaming:", error);
+      console.error("Error during request:", error);
     } finally {
       setIsGenerating(false);
     }

@@ -1019,10 +1019,76 @@
           }
         }
       }
+    },
+    "/ask-conformix/": {
+      "post": {
+        "tags": [
+          "ask-conformix"
+        ],
+        "summary": "Ask Conformix",
+        "operationId": "ask_conformix",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskConformixRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Ask-Conformix-Ask Conformix"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "AskConformixRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "repository_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Repository Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "repository_id"
+        ],
+        "title": "AskConformixRequest"
+      },
       "BearerResponse": {
         "properties": {
           "access_token": {

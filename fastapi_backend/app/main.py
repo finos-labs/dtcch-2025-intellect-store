@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .utils import simple_generate_unique_route_id
 from app.routes.repositories import router as repositories_router
 from app.routes.sources import router as sources_router
+from app.routes.ask_conformix import router as ask_conformix_router
 from app.config import settings
 
 app = FastAPI(
@@ -51,3 +52,4 @@ app.include_router(
 # Include items routes
 app.include_router(repositories_router, prefix="/repositories")
 app.include_router(sources_router, prefix="/sources")
+app.include_router(ask_conformix_router, prefix="/ask-conformix")

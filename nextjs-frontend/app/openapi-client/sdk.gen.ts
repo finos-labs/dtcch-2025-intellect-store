@@ -63,6 +63,9 @@ import type {
   DeleteSourceData,
   DeleteSourceError,
   DeleteSourceResponse,
+  AskConformixData,
+  AskConformixError,
+  AskConformixResponse,
 } from "./types.gen";
 
 export const client = createClient(createConfig());
@@ -389,5 +392,21 @@ export const deleteSource = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/sources/{source_id}",
+  });
+};
+
+/**
+ * Ask Conformix
+ */
+export const askConformix = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<AskConformixData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    AskConformixResponse,
+    AskConformixError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/ask-conformix/",
   });
 };
