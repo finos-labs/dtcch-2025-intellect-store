@@ -15,6 +15,7 @@ html
 
 # Virtual environments
 venv
+.venv
 
 # Miscellaneous
 .idea

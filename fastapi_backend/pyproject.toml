@@ -12,6 +12,9 @@ dependencies = [
     "fastapi-users-db-sqlalchemy>=6.0.1",
     "pydantic-settings>=2.5.2,<3",
     "fastapi-mail>=1.4.1,<2",
+    "boto3>=1.36.14",
+    "langchain",
+    "langchain-aws",
 ]
 
 [dependency-groups]

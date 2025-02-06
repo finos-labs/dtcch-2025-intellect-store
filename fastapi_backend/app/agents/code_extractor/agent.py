@@ -1,4 +1,5 @@
 from typing import Any, Tuple
+from uuid import UUID
 from app.agents.base_agent import AgentOutput, BaseAgent
 
 from dataclasses import dataclass
@@ -17,5 +18,5 @@ class CodeExtractorOutput(AgentOutput):
 class CodeExecutorAgent(BaseAgent):
     '''Retrieves source code from Git repositories using gitingest.'''
     #use environment variables for connecting to the database
-    def run(self, *args: Any, **kwargs: Any) -> CodeExtractorOutput:
+    def run(self, repository_id: UUID, **kwargs: Any) -> CodeExtractorOutput:
         return CodeExtractorOutput(success=True, extracted_code="Hello World")
