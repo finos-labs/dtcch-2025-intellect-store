@@ -59,3 +59,7 @@ class SourceRead(SourceBase):
     user_id: UUID
 
     model_config = {"from_attributes": True}
+
+class AskConformixBase(BaseModel):
+    query: str
+    repository_id: UUID
