@@ -40,11 +40,9 @@ def get_security_transaction_lookups(ntsp_data: NTSPInput) -> Tuple[Dict[int, Li
         T_debit_sec[sp.id] = []
         T_credit_sec[sp.id] = []
     for t in ntsp_data.transactions:
-        if t.security_id in T_debit_sec:
-            if t.security_flow == -1:
-                T_debit_sec[t.security_id].append(t)
-            elif t.security_flow == 1:
-                T_credit_sec[t.security_id].append(t)
+        T_debit_sec[t.credit_account].append(t.id)
+        T_credit_sec[t.debit_account].append(t.id)
+
     return T_debit_sec, T_credit_sec
 
 

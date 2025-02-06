@@ -58,7 +58,7 @@ class Transaction(BaseModel):
     credit_account: int = Field(..., description="ID of the account credited.")
     security_id: int = Field(..., description="ID of the security traded.")
     quantity: int = Field(..., description="Quantity of securities exchanged (qₜ).")
-    security_flow: int = Field(..., description="Flow direction: -1 for outflow, +1 for inflow.")
+    # security_flow: int = Field(..., description="Flow direction: -1 for outflow, +1 for inflow.")
 
 
 class CollateralLink(BaseModel):

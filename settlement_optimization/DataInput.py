@@ -63,6 +63,45 @@ def gen_init_conditions(batch):
     return cash_accounts, security_positions, sec_collateral_links
 
 
+def transactions_from_csv(batch):
+    transactions = []
+
+    for index, row in batch.iterrows():
+        cash_amount = row["price"] * row["quantity"]
+
+        priority = np.log(np.power(cash_amount, 0.25) * len(batch.loc[(batch["from"] == row["from"]) | 
+                                                        (batch["from"] == row["to"]) | 
+                                                        (batch["to"] == row["from"]) | 
+                                                        (batch["to"] == row["to"])].index))
+
+        trans = Transaction(
+            id=index,
+            cash_amount=cash_amount,
+            weight=priority,
+            debit_account=hash(row["to"]),
+            credit_account=hash(row["from"]),
+            security_id=hash(row["security"]),
+            quantity=int(row["quantity"]),
+        )
+        transactions.append(trans)
+    
+    after_links = []
+    all_parties = pd.concat([batch["to"], batch["from"]]).unique()
+
+    for party in all_parties:
+        party_transactions = batch.loc[(batch["from"] == party) | (batch["to"] == party)]
+        if (len(party_transactions.index) > 0.05*len(batch.index)) and (len(party_transactions.index) > 6) and (np.random.rand() > 0.65):
+            for k in [0, 2, 4]:
+                linkk = AfterLink(
+                    t1=party_transactions.iloc[k].name,
+                    t2=party_transactions.iloc[k+1].name)
+                after_links.append(linkk)
+
+
+    return transactions, after_links
+
+
+
 def generate_ntsp_input(
     n_transactions: int,
     n_collateral_links: int,
@@ -138,7 +177,7 @@ def generate_ntsp_input(
         sec_id = random.choice(securities)
         # For simplicity, all transactions here reduce the security position (outflow).
         quantity = random.randint(10, 100)
-        security_flow = -1
+        #security_flow = -1
         transactions.append(Transaction(
             id=i,
             cash_amount=cash_amount,
@@ -147,7 +186,7 @@ def generate_ntsp_input(
             credit_account=credit_acc,
             security_id=sec_id,
             quantity=quantity,
-            security_flow=security_flow
+           # security_flow=security_flow
         ))
 
     # Ensure each security is used by at least one transaction.
