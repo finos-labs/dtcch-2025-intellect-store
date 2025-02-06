@@ -38,8 +38,8 @@ def _gen_init_conditions(batch):
         party_buys = batch.loc[batch["to"] == party]
         avg_cash_sell = np.mean(np.multiply(party_buys["price"], party_buys["quantity"]))
 
-        init_cash = max(5000, 0.5*avg_cash_sell + np.random.normal(0.5*avg_cash_sell, 0.5*avg_cash_sell))
-        cash_credit_limit = max(10000, 2*init_cash + np.random.normal(init_cash, 0.5*init_cash))
+        init_cash = max(25000, 2.5*avg_cash_sell + np.random.normal(1.5*avg_cash_sell, 1.5*avg_cash_sell))
+        cash_credit_limit = max(25000, 2*init_cash + np.random.normal(init_cash, 1.5*init_cash))
 
         p_acc = Account(
             id=hash(party),
@@ -55,9 +55,9 @@ def _gen_init_conditions(batch):
 
             if len(party_sells.index) > 0:
                 avg_sec_sell = np.mean(party_sells["quantity"])
-                init_sec = max(1000, 1.5*avg_sec_sell + np.random.normal(0.5*avg_sec_sell, 0.5*avg_sec_sell))
+                init_sec = max(10000, 2.5*avg_sec_sell + np.random.normal(1.5*avg_sec_sell, 1.5*avg_sec_sell))
             else:
-                init_sec = 1000 * int(np.random.random() > 0.75)
+                init_sec = 10000 * int(np.random.random() > 0.75)
             
             p_sec_pos = SecurityPosition(
                 id=hash(security),
@@ -66,14 +66,14 @@ def _gen_init_conditions(batch):
             )
             security_positions.append(p_sec_pos)
 
-            if (len(party_sells.index) > 0) and (avg_sec_sell >= 0.5*np.mean(batch.loc[batch["from"] == party]["quantity"])) and (np.random.random() > 0.25):
+            if (len(party_sells.index) > 0) and (avg_sec_sell >= 0.5*np.mean(batch.loc[batch["from"] == party]["quantity"])) and (np.random.random() > 0.2):
                 c_link_sec_party = CollateralLink(
                     id=cli,
                     associated_account=hash(party),
-                    lot_size=100,
+                    lot_size=500,
                     valuation=0.95*np.mean(party_sells["price"]),
-                    q_min=100,
-                    q_lim=int(np.floor((0.5 + np.random.random())*init_sec)),
+                    q_min=500,
+                    q_lim=int(np.floor((0.5 + np.random.random())*init_sec*2)),
                     triggered_transactions=[],  # to be set later.
                     security_id=hash(security)
                 )
@@ -89,10 +89,10 @@ def _transactions_from_csv(batch):
     for index, row in batch.iterrows():
         cash_amount = row["price"] * row["quantity"]
 
-        priority = np.log(np.power(cash_amount, 0.25) * len(batch.loc[(batch["from"] == row["from"]) | 
+        priority = 0.5*abs(np.log(np.power(cash_amount, 0.25) * len(batch.loc[(batch["from"] == row["from"]) | 
                                                         (batch["from"] == row["to"]) | 
                                                         (batch["to"] == row["from"]) | 
-                                                        (batch["to"] == row["to"])].index))
+                                                        (batch["to"] == row["to"])].index)))
 
         trans = Transaction(
             id=index,
