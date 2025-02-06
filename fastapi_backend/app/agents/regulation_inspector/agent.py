@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List
 
 @dataclass
-class CodeInspectorOutput(AgentOutput):
+class RegulationInspectorOutput(AgentOutput):
     """
     A simple container for storing code inspection output.
     
@@ -19,5 +19,5 @@ class RegulationInspectorAgent(BaseAgent):
     Analyzes and extracts detailed differences between old and new regulatory documents.  
     '''
     #use environment variables for connecting to the database
-    def run(self, *args: Any, **kwargs: Any) -> CodeInspectorOutput:
-        return CodeInspectorOutput(success=True, summary_of_changes="Hello World")
+    def run(self, *args: Any, **kwargs: Any) -> RegulationInspectorOutput:
+        return RegulationInspectorOutput(success=True, summary_of_changes="Hello World")
