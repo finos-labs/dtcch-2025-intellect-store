@@ -1,9 +1,20 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any, Tuple
+
+@dataclass
+class AgentOutput:
+    """
+    Base class for agent outputs.
+    
+    Attributes:
+        success (bool): Indicates whether the operation was successful.
+    """
+    success: bool
 
 class BaseAgent(ABC):
     @abstractmethod
-    def run(self, *args: Any, **kwargs: Any) -> Tuple[bool, Any]:
+    def run(self, *args: Any, **kwargs: Any) -> AgentOutput:
         """
         Execute the agent's logic.
 
