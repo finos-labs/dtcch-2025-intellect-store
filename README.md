@@ -44,13 +44,10 @@
   - [Alembic Database Migrations](#alembic-database-migrations)
   - [Production Deployment](#production-deployment)
     - [Overview](#overview)
-  - [TODO:Diogo, add instructions here](#tododiogo-add-instructions-here)
-    - [Frontend Deployment](#frontend-deployment)
-    - [Backend Deployment](#backend-deployment)
   - [Deployment](#deployment)
-    - [Prerequisites](#prerequisites)
-    - [Backend Setup](#backend-setup)
-    - [Notes](#notes)
+    - [Deploy it Locally](#deploy-it-locally)
+    - [Deploy it in EC2](#deploy-it-in-ec2)
+    - [Deploy it in Kubernetes](#deploy-it-in-kubernetes)
   - [**Post-Deployment Configuration**](#post-deployment-configuration)
     - [Frontend](#frontend-1)
     - [Backend](#backend-1)
@@ -311,7 +308,7 @@ then apply the migration to the database:
 ### Deploy it locally
 - We can refer to the section [Running the Application](#Running the Application) so, we understand how to deploy it in our own host. That's the easiest way to test the app.
 
-### Deploy in EC2
+### Deploy it in EC2
 - If we want to deploy to have the application externally available, the easiest way with minor changes would be with an EC2 instance with the docker containers since it would replicate our deployment.
 
 - So for that, we need to:
@@ -370,7 +367,7 @@ sudo usermod -aG docker ec2-user
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ````
-5. Finally, run the app:
+6. Finally, run the app:
 ````
 cd /home/ec2-user/my-app
 make docker-start-backend
@@ -378,32 +375,16 @@ make docker-start-frontend
 ````
 - Here, there are still improvements that have to be perfomed like having the frontend in a Public EC2 and the backend in a private one.
 
-### Deploy in Kubernetes
+### Deploy it in Kubernetes
 - Picking up the previous statement about separed the front-end from the backend, a good way to accomplish this and have the app more scallable and resilient is to deploy it in the kubernetes.
 
 - For that, we need to:
+````
 1. Upload the images to a registry.
 2. Deploy a kubernetes cluster.
 3. Create the kubernetes manifests: deployment, services, ingresses and secrets.
-
+````
 - So, deploying a kubernetes cluster would be the next steps regarding infrastructure and deployment.
-
-
-### Backend Deployment
-
-1. **Deploying the Backend**  
-   - Click the **Backend** button above to begin deployment.
-   - Set up the database first. The connection is automatically configured, so just follow the steps, and it should work by default.
-   - During the deployment process, you will be prompted to configure the following environment variables:
-
-     - **CORS_ORIGINS**  
-       - Set this to `["*"]` initially to allow all origins. You will update this with the frontend URL later.
-
-     - **ACCESS_SECRET_KEY**, **RESET_PASSWORD_SECRET_KEY**, **VERIFICATION_SECRET_KEY**  
-       - You can temporarily set these secret keys as plain strings (e.g., `examplekey`) during deployment. However, you should generate secure keys and update them after the deployment in the **Post-Deployment Configuration** section.
-
-   - Complete the deployment process [here](#post-deployment-configuration).
-
 
 ### Prerequisites
 1. **Create a Vercel Token**:  
