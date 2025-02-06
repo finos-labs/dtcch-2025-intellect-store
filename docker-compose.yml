@@ -5,7 +5,7 @@ services:
     environment:
       - OPENAPI_OUTPUT_FILE=./shared-data/openapi.json
       - DATABASE_URL=${DATABASE_URL}
-      - TEST_DATABASE_URL=mysql+aiomysql://root:dtcc-hack@singlestore:3306/testdatabase
+      - TEST_DATABASE_URL=mysql+aiomysql://root:dtcc-hack@singlestore:3306/test # use this for local tests, after manual "CREATE DATABASE test"
       - MAIL_SERVER=mailhog
     ports:
       - "8000:8000"
@@ -18,8 +18,8 @@ services:
     depends_on:
       - singlestore
   singlestore: # local test singlestore database cluster, hackathon data on https://portal.singlestore.com/organizations/02f09220-558c-4cbd-bd7a-040b7b490afe/workspaces/04e671e3-dc91-4e19-9789-5aacdcd60b15
-    # test connectivity with...
-    #   mysql -h 127.0.0.1 -P 3306 -u root --password="dtcc-hack" --prompt="singlestore> " --database=""
+    # test connectivity from backend with...
+    #   mysql -h singlestore -P 3306 -u root --password="dtcc-hack" --prompt="singlestore> " --database=""
     image: singlestore/cluster-in-a-box
     platform: linux/amd64
     environment:
