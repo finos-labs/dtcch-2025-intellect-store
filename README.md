@@ -4,38 +4,20 @@
 
 
 ## Project Name
-
+@ivor add instructions here
 
 ### Project Details
-
+@ivor add instructions here
 
 ### Team Information
+@ivor add our team information here incl linkedin
 
-
-## Using DCO to sign your commits
-
-**All commits** must be signed with a DCO signature to avoid being flagged by the DCO Bot. This means that your commit log message must contain a line that looks like the following one, with your actual name and email address:
-
-```
-Signed-off-by: John Doe <john.doe@example.com>
-```
-
-Adding the `-s` flag to your `git commit` will add that line automatically. You can also add it manually as part of your commit log message or add it afterwards with `git commit --amend -s`.
-
-See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
-
-### Helpful DCO Resources
-- [Git Tools - Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
-- [Signing commits
-](https://docs.github.com/en/github/authenticating-to-github/signing-commits)
 
 ## Table of Contents
 - [FINOS DTCC Hackathon](#finos-dtcc-hackathon)
   - [Project Name](#project-name)
     - [Project Details](#project-details)
     - [Team Information](#team-information)
-  - [Using DCO to sign your commits](#using-dco-to-sign-your-commits)
-    - [Helpful DCO Resources](#helpful-dco-resources)
   - [Table of Contents](#table-of-contents)
   - [Technology Stack](#technology-stack)
   - [Setup](#setup)
@@ -60,14 +42,12 @@ See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
     - [Running Pre-Commit Checks](#running-pre-commit-checks)
     - [Updating Pre-Commit Hooks](#updating-pre-commit-hooks)
   - [Alembic Database Migrations](#alembic-database-migrations)
-  - [GitHub Actions](#github-actions)
-    - [Secrets Configuration](#secrets-configuration)
   - [Production Deployment](#production-deployment)
     - [Overview](#overview)
-  - [TODO:Currently, the project uses Vercel for deployment. This should be changed to AWS.](#todocurrently-the-project-uses-vercel-for-deployment-this-should-be-changed-to-aws)
+  - [TODO:Diogo, add instructions here](#tododiogo-add-instructions-here)
     - [Frontend Deployment](#frontend-deployment)
     - [Backend Deployment](#backend-deployment)
-  - [CI (GitHub Actions) Setup for Production Deployment](#ci-github-actions-setup-for-production-deployment)
+  - [Deployment](#deployment)
     - [Prerequisites](#prerequisites)
     - [Backend Setup](#backend-setup)
     - [Notes](#notes)
@@ -78,6 +58,8 @@ See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
   - [Makefile](#makefile)
     - [Available Commands](#available-commands)
   - [Important Considerations](#important-considerations)
+  - [Using DCO to sign your commits](#using-dco-to-sign-your-commits)
+    - [Helpful DCO Resources](#helpful-dco-resources)
   - [License](#license)
 
 ## Technology Stack
@@ -324,24 +306,11 @@ then apply the migration to the database:
    make docker-migrate-db
    ```
 
-## GitHub Actions
-You can find preliminary workflow configuration files inside the .github/workflows directory.TODO:customize these workflows to better suit your project's needs.
-
-### Secrets Configuration
-For the workflows to function correctly, make sure to add the necessary secret keys to your GitHub repository's settings. Navigate to Settings > Secrets and variables > Actions and add the following keys:
-```
-DATABASE_URL: The connection string for your primary database.
-TEST_DATABASE_URL: The connection string for your test database.
-ACCESS_SECRET_KEY: The secret key for access token generation.
-RESET_PASSWORD_SECRET_KEY: The secret key for reset password functionality.
-VERIFICATION_SECRET_KEY: The secret key for email or user verification.
-```
-
 ## Production Deployment
 
 ### Overview
 
- TODO:Currently, the project uses Vercel for deployment. This should be changed to AWS.
+ TODO:Diogo, add instructions here
 ---
 
 ### Frontend Deployment
@@ -367,7 +336,7 @@ VERIFICATION_SECRET_KEY: The secret key for email or user verification.
    - Complete the deployment process [here](#post-deployment-configuration).
 
 
-## CI (GitHub Actions) Setup for Production Deployment
+## Deployment
 
 To enable Continuous Integration through Github Actions, you can use the **prod-backend-deploy.yml** and **prod-frontend-deploy.yml** files. To connect them to GitHub, simply move them to the .github/workflows/ directory.
 
@@ -437,13 +406,11 @@ You can do it with the following commands:
 ## **Post-Deployment Configuration**
 
 ### Frontend
-   - Navigate to the **Settings** page of the deployed frontend project.  
-   - Access the **Environment Variables** section.  
+   - Access the **Environment Variables**.  
    - Update the `API_BASE_URL` variable with the backend URL once the backend deployment is complete.
 
 ### Backend
-   - Access the **Settings** page of the deployed backend project.  
-   - Navigate to the **Environment Variables** section and update the following variables with secure values:
+   - **Environment Variables** update the following variables with secure values:
 
      - **CORS_ORIGINS**  
        - Once the frontend is deployed, replace `["*"]` with the actual frontend URL.
@@ -461,19 +428,7 @@ You can do it with the following commands:
 
 ### Database Connection
 
-   1. **Choosing a Database**
-      - You can use your own database hosted on a different service or opt for the [Neon](https://neon.tech/docs/introduction) database, which integrates seamlessly with Vercel.
-
-   2. **Setting Up a Neon Database via Vercel**
-      - In the **Backend** project page on Vercel, navigate to the **Storage** section.  
-      - Select the option to **Create a Database** to provision a Neon database.
-
-   3. **Configuring the Database URL**
-      - After creating the database, retrieve the **Database URL** provided by Neon.  
-      - Include this URL in your **Environment Variables** under `DATABASE_URL`.  
-
-   4. **Migrating the Database**
-      - The database migration will happen automatically during the deployment GitHub action, setting up the necessary tables and schema.
+  TODO: @dcohen add instructions here
 
 
 ## Makefile
@@ -492,6 +447,23 @@ make help
 - **Environment Variables**: Ensure your `.env` files are up-to-date.
 - **Database Setup**: It is recommended to use Docker for running the database, even when running the backend and frontend locally, to simplify configuration and avoid potential conflicts.
 - **Consistency**: It is **not recommended** to switch between running the project locally and using Docker, as this may cause permission issues or unexpected problems. Choose one method and stick with it.
+
+## Using DCO to sign your commits
+
+**All commits** must be signed with a DCO signature to avoid being flagged by the DCO Bot. This means that your commit log message must contain a line that looks like the following one, with your actual name and email address:
+
+```
+Signed-off-by: John Doe <john.doe@example.com>
+```
+
+Adding the `-s` flag to your `git commit` will add that line automatically. You can also add it manually as part of your commit log message or add it afterwards with `git commit --amend -s`.
+
+See [CONTRIBUTING.md](./.github/CONTRIBUTING.md) for more information
+
+### Helpful DCO Resources
+- [Git Tools - Signing Your Work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
+- [Signing commits
+](https://docs.github.com/en/github/authenticating-to-github/signing-commits)
 
 ## License
 
