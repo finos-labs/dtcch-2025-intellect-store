@@ -31,6 +31,9 @@ COPY . .
 # Expose the application port
 EXPOSE 8000
 
+# mysql client for connecting to singlestore
+RUN apt-get install -y --no-install-recommends default-mysql-client
+
 # Command to run the application
 CMD ["./start.sh"]
 #CMD ["sh", "-c", "sleep 1000000"]
