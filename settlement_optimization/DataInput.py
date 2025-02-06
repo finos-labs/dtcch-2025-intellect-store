@@ -15,12 +15,13 @@ def gen_init_conditions(batch):
     security_positions = []
     sec_collateral_links = []
 
+    cli = 1
     for party in all_parties:
         party_buys = batch.loc[batch["to"] == party]
         avg_cash_sell = np.mean(np.multiply(party_buys["price"], party_buys["quantity"]))
 
-        init_cash = max(10000, 1.5*avg_cash_sell + np.random.normal(0.5*avg_cash_sell, 0.5*avg_cash_sell))
-        cash_credit_limit = max(5000, init_cash + np.random.normal(0.5*init_cash, 0.5*init_cash))
+        init_cash = max(5000, 0.5*avg_cash_sell + np.random.normal(0.5*avg_cash_sell, 0.5*avg_cash_sell))
+        cash_credit_limit = max(10000, 2*init_cash + np.random.normal(init_cash, 0.5*init_cash))
 
         p_acc = Account(
             id=hash(party),
@@ -30,14 +31,15 @@ def gen_init_conditions(batch):
             )
         cash_accounts.append(p_acc)
 
+        
         for security in all_securities:
             party_sells = batch.loc[(batch["from"] == party) & (batch["security"] == security)]
 
             if len(party_sells.index) > 0:
                 avg_sec_sell = np.mean(party_sells["quantity"])
-                init_sec = max(500, 1.5*avg_sec_sell + np.random.normal(0.5*avg_sec_sell, 0.5*avg_sec_sell))
+                init_sec = max(1000, 1.5*avg_sec_sell + np.random.normal(0.5*avg_sec_sell, 0.5*avg_sec_sell))
             else:
-                init_sec = 500 * int(np.random.random() > 0.75)
+                init_sec = 1000 * int(np.random.random() > 0.75)
             
             p_sec_pos = SecurityPosition(
                 id=hash(security),
@@ -46,18 +48,18 @@ def gen_init_conditions(batch):
             )
             security_positions.append(p_sec_pos)
 
-
-            if (len(party_sells.index) > 0) and (avg_sec_sell >= 0.75*np.mean(batch.loc[batch["from"] == party]["quantity"])) and (np.random.random() > 0.5):
+            if (len(party_sells.index) > 0) and (avg_sec_sell >= 0.5*np.mean(batch.loc[batch["from"] == party]["quantity"])) and (np.random.random() > 0.25):
                 c_link_sec_party = CollateralLink(
-                    id=np.random.randint(0, 10000000),
+                    id=cli,
                     associated_account=hash(party),
-                    lot_size=20,
+                    lot_size=100,
                     valuation=0.95*np.mean(party_sells["price"]),
-                    q_min=0,
+                    q_min=100,
                     q_lim=int(np.floor((0.5 + np.random.random())*init_sec)),
                     triggered_transactions=[],  # to be set later.
                     security_id=hash(security)
                 )
+                cli = cli + 1
                 sec_collateral_links.append(c_link_sec_party)
 
     return cash_accounts, security_positions, sec_collateral_links
@@ -156,14 +158,14 @@ def generate_ntsp_input(
     # Ensure each distinct security is held by at least one account.
     security_positions = []
     for sec in securities:
-        # Randomly assign this security to one of the accounts.
-        acc_id = random.choice([acc.id for acc in accounts])
-        init_qty = random.randint(100, 1000)
-        security_positions.append(SecurityPosition(
-            id=sec,
-            account_id=acc_id,
-            initial_quantity=init_qty
-        ))
+        for acc_id in random.choices([acc.id for acc in accounts], k = random.randint(2, n_accounts // 2)):
+            # Randomly assign this security to one of the accounts.
+            init_qty = random.randint(100, 1000)
+            security_positions.append(SecurityPosition(
+                id=sec,
+                account_id=acc_id,
+                initial_quantity=init_qty
+            ))
 
     # 4) Generate Transactions.
     transactions = []

@@ -113,3 +113,8 @@ class NTSPInput(BaseModel):
     collateral_links: List[CollateralLink] = Field(..., description="List of collateral links (SPL).")
     after_links: List[AfterLink] = Field(..., description="List of ordering constraints (Eq. (5)).")
     security_positions: List[SecurityPosition] = Field(..., description="List of security positions.")
+
+
+
+def NTSP_print(model: NTSPInput):
+    1
