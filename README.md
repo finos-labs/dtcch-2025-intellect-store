@@ -42,12 +42,11 @@
     - [Running Pre-Commit Checks](#running-pre-commit-checks)
     - [Updating Pre-Commit Hooks](#updating-pre-commit-hooks)
   - [Alembic Database Migrations](#alembic-database-migrations)
-  - [Production Deployment](#production-deployment)
-    - [Overview](#overview)
   - [Deployment](#deployment)
-    - [Deploy it Locally](#deploy-it-locally)
+    - [Deploy it locally](#deploy-it-locally)
     - [Deploy it in EC2](#deploy-it-in-ec2)
-    - [Deploy it in Kubernetes](#deploy-it-in-kubernetes)
+    - [Future work - Kubernetes deployment](#future-work---kubernetes-deployment)
+    - [Notes](#notes)
   - [**Post-Deployment Configuration**](#post-deployment-configuration)
     - [Frontend](#frontend-1)
     - [Backend](#backend-1)
@@ -375,66 +374,11 @@ make docker-start-frontend
 ````
 - Here, there are still improvements that have to be perfomed like having the frontend in a Public EC2 and the backend in a private one.
 
-### Deploy it in Kubernetes
-- Picking up the previous statement about separed the front-end from the backend, a good way to accomplish this and have the app more scallable and resilient is to deploy it in the kubernetes.
-
-- For that, we need to:
-````
+### Future work - Kubernetes deployment
+The following steps are needed to deploy the application in a Kubernetes cluster:
 1. Upload the images to a registry.
 2. Deploy a kubernetes cluster.
 3. Create the kubernetes manifests: deployment, services, ingresses and secrets.
-````
-- So, deploying a kubernetes cluster would be the next steps regarding infrastructure and deployment.
-
-### Prerequisites
-1. **Create a Vercel Token**:  
-   - Generate your [Vercel Access Token](https://vercel.com/account/tokens).  
-   - Save the token as `VERCEL_TOKEN` in your GitHub secrets.
-
-2. **Install Vercel CLI**:  
-   ```bash
-   pnpm i -g vercel@latest
-   ```
-3. Authenticate your account.
-    ```bash
-   vercel login
-   ```
-### Frontend Setup
-
-1. Link the nextjs-frontend Project
-
-2. Navigate to the nextjs-frontend directory and run:
-   ```bash
-   cd nextjs-frontend
-   vercel link
-   ```
-3. Follow the prompts:
-   - Link to existing project? No
-   - Modify settings? No
-
-4. Save Project IDs and Add GitHub Secrets:
-  - Open `nextjs-frontend/.vercel/project.json` and add the following to your GitHub repository secrets:
-    - `projectId` → `VERCEL_PROJECT_ID_FRONTEND`
-    - `orgId` → `VERCEL_ORG_ID`
-
-### Backend Setup
-
-1. Link the fastapi_backend Project
-
-2. Navigate to the fastapi_backend directory and run:
-   ```bash
-   cd fastapi_backend
-   vercel link --local-config=vercel.prod.json
-   ```
-   - We have a special configuration than we need to set the --local-config value.
-3. Follow the prompts:
-   - Link to existing project? No
-   - Modify settings? No
-
-4. Save Project IDs and Add GitHub Secrets:
-  - Open `fastapi_backend/.vercel/project.json` and add the following to your GitHub repository secrets:
-    - `projectId` → `VERCEL_PROJECT_ID_BACKEND`
-    - `orgId` → `VERCEL_ORG_ID` (Only in case you haven't added that before)
 
 ### Notes
 - Once everything is set up, simply run `git push`, and the deploy will automatically take place.
