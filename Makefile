@@ -3,7 +3,7 @@
 # Variables
 BACKEND_DIR=fastapi_backend
 FRONTEND_DIR=nextjs-frontend
-DOCKER_COMPOSE=docker compose
+DOCKER_COMPOSE ?= docker compose
 
 # Help
 .PHONY: help
