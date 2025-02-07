@@ -157,10 +157,11 @@ Copy the `.env.example` files to `.env`. These values are unlikely to change, so
    ```
 
 ### Running the Database
+
 1. Use Docker to run the database to avoid local installation issues. Build and start the database container:
    ```bash
-   docker compose build db
-   docker compose up -d db
+   docker compose build singlestore
+   docker compose up -d singlestore
    ```
 2. Run the following command to apply database migrations:
    ```bash
